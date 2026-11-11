@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#ffb3d1">
+<title>きらきら☆おしゃれスタジオ</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%84%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ================= タイトル ================= -->
+  <section id="scr-title" class="screen on">
+    <div class="floaties" id="floaties"></div>
+    <div class="title-wrap">
+      <div class="title-chara" id="titleChara"></div>
+      <div class="title-main">
+        <h1 class="logo">
+          <span class="logo-top"><i>★</i>きらきら<i>★</i></span>
+          <span class="logo-main">おしゃれスタジオ</span>
+          <span class="logo-sub">メイク ＆ きせかえ</span>
+        </h1>
+        <div class="title-btns">
+          <button class="big-btn pink" id="btnFree"><span class="bi">💄</span>じゆうに あそぶ</button>
+          <button class="big-btn purple" id="btnChallenge"><span class="bi">⭐</span>おだいに チャレンジ</button>
+          <button class="big-btn mint" id="btnAlbum"><span class="bi">📖</span>アルバム</button>
+        </div>
+      </div>
+    </div>
+    <div class="title-opts">
+      <button class="round-btn" id="optBgm" aria-label="おんがく">🎵</button>
+      <button class="round-btn" id="optSe" aria-label="こうかおん">🔔</button>
+    </div>
+  </section>
+
+  <!-- ================= スタジオ ================= -->
+  <section id="scr-studio" class="screen">
+    <div class="stage" id="stage">
+      <svg id="stageSvg" viewBox="0 20 600 800" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <g id="cam"><g id="bgL"></g><g id="shadowL"></g><g id="bob"><g id="chara"></g></g><g id="fx"></g></g>
+      </svg>
+      <div class="stage-top">
+        <button class="round-btn" id="btnHome" aria-label="ホーム">🏠</button>
+        <button class="round-btn" id="stBgm" aria-label="おんがく">🎵</button>
+        <button class="round-btn" id="stSe" aria-label="こうかおん">🔔</button>
+      </div>
+      <div class="theme-banner" id="themeBanner"></div>
+      <div class="guide" id="guide">
+        <div class="bubble" id="bubble"></div>
+        <button class="mascot" id="mascot" aria-label="キララ"></button>
+      </div>
+      <div class="stage-btns">
+        <button class="act-btn" id="btnRandom"><span class="ai">🎲</span><span class="al">おまかせ</span></button>
+        <button class="act-btn" id="btnUndo"><span class="ai">↩️</span><span class="al">もどす</span></button>
+        <button class="act-btn" id="btnReset"><span class="ai">🧹</span><span class="al">さいしょから</span></button>
+        <button class="act-btn primary" id="btnPhoto"><span class="ai">📷</span><span class="al">しゃしん</span></button>
+        <button class="act-btn primary done" id="btnDone"><span class="ai">✨</span><span class="al">できた！</span></button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="tabs" id="tabs"></div>
+      <div class="subs" id="subs"></div>
+      <div class="items" id="items"></div>
+      <div class="pal" id="pal"></div>
+    </div>
+  </section>
+
+  <!-- ================= おだい えらび ================= -->
+  <section id="scr-themes" class="screen">
+    <header class="bar">
+      <button class="round-btn" data-go="title" aria-label="もどる">🏠</button>
+      <h2>おだいを えらんでね</h2>
+      <div class="bar-right" id="themeCount"></div>
+    </header>
+    <div class="theme-grid" id="themeGrid"></div>
+  </section>
+
+  <!-- ================= しゃしん ================= -->
+  <section id="scr-photo" class="screen">
+    <div class="photo-left">
+      <div class="photo-card" id="photoCard"></div>
+    </div>
+    <div class="photo-right">
+      <h2 class="photo-title">しゃしんを デコろう！</h2>
+      <div class="tool-label">フレーム</div>
+      <div class="frame-row" id="frameRow"></div>
+      <div class="tool-label">スタンプ <small>えらんで しゃしんを タッチ！</small></div>
+      <div class="stamp-grid" id="stampGrid"></div>
+      <div class="photo-btns">
+        <button class="mid-btn gray" id="btnStampUndo">↩️ スタンプを けす</button>
+        <button class="mid-btn pink" id="btnSaveAlbum">📖 アルバムに いれる</button>
+        <button class="mid-btn mint" id="btnSavePng">💾 がぞうを ほぞん</button>
+        <button class="mid-btn purple" id="btnPhotoBack">👗 つづきを あそぶ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= アルバム ================= -->
+  <section id="scr-album" class="screen">
+    <header class="bar">
+      <button class="round-btn" data-go="title" aria-label="もどる">🏠</button>
+      <h2>アルバム</h2>
+      <div class="bar-right" id="albumCount"></div>
+    </header>
+    <div class="album-grid" id="albumGrid"></div>
+  </section>
+
+  <div id="flash"></div>
+  <div id="modal" class="modal"></div>
+  <div id="toast" class="toast"></div>
+  <div id="confetti"></div>
+</div>
+
+<script src="js/util.js"></script>
+<script src="js/art-body.js"></script>
+<script src="js/art-wear.js"></script>
+<script src="js/art-acc.js"></script>
+<script src="js/art-bg.js"></script>
+<script src="js/art-compose.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
