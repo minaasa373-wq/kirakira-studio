@@ -104,6 +104,11 @@
         s += P('M215,106 C250,120 350,120 385,106 L386,125 C350,139 250,139 214,125Z', c.M, c.ml, 2) + U.bow(376, 124, 40, 24, c.M, c.ml, { sw: 1.8, tails: 22 });
         return { front: s };
       } },
+    { id: 'elf', n: 'エルフのみみ', tags: ['magic', 'fairy'], tb: [100, 180, 400, 150],
+      draw(c, k) {
+        k = k || { c: '#FDD9C0', line: '#c08a80', shade: '#f0b0a8' };
+        return { front: U.both(P('M203,250 C178,247 152,236 128,212 C135,250 158,280 201,292Z', k.c, k.line, 2.5) + P('M190,262 C172,258 158,250 146,238', 'none', k.shade, 2.5)) };
+      } },
   ];
 
   /* ================= めがね ================= */
@@ -212,6 +217,12 @@
         return two('M396,564 L404,526', '#8a5a2c', 7, '#d9a05c', 4) + `<circle cx="410" cy="486" r="43" fill="#ffffff" stroke="#f0607a" stroke-width="3.5"/>` +
           P('M376,500 q8,-6 16,0 q8,6 16,0 q8,-6 16,0 q8,6 16,0 M382,512 q8,-6 16,0 q8,6 16,0 q8,-6 16,0', 'none', '#7fc8f0', 2.4) +
           P('M420,474 l16,-10 l-2,20Z', '#ff8a70', '#d9503a', 1.4) + `<ellipse cx="406" cy="474" rx="16" ry="10" fill="#ff6f5c" stroke="#d9503a" stroke-width="1.6"/><circle cx="398" cy="472" r="2.4" fill="#fff"/><circle cx="397.5" cy="472" r="1.2" fill="#3b2430"/>` + fingers(396, 549, k);
+      } },
+    { id: 'staff', n: 'まほうのつえ', tags: ['magic', 'fairy'], tb: [350, 240, 170, 420],
+      draw(k) {
+        const H = 'M462,330 C438,320 430,290 446,272 C458,260 478,262 486,276';
+        return two('M372,650 L462,330', '#8a5a2c', 10, '#c98b4d', 6) + P(H, 'none', '#c9860f', 9) + P(H, 'none', GOLD, 5.5) +
+          U.gem(464, 296, 10, '#f2485c', '#b8182e') + U.sparkle(494, 258, 7, '#fff7c2') + U.sparkle(440, 250, 5, '#fff7c2') + fingers(399, 548, k);
       } },
   ];
 
@@ -329,6 +340,19 @@
           pboth(P('M472,722 q-12,14 -6,32 q10,-8 10,-24Z', c, l, 2)) + P(ell(PX, 740, 20, 30), '#ffffff') + P('M480,706 Q488,692 500,704 Q512,692 520,706 Q512,722 500,716 Q488,722 480,706Z', '#ffffff') +
           pface(708, { noNose: true, noMouth: true }) + P('M495,714 h10 l-5,7Z', '#ffa83c', '#d9782a', 1.5) + P('M476,728 q24,12 48,0', 'none', '#f2485c', 6) + P('M514,730 l6,16', 'none', '#f2485c', 6);
       } },
+    { id: 'puppy', n: 'しろいこいぬ', tags: ['casual', 'school', 'yume'], tb: [440, 640, 120, 140],
+      draw() {
+        const c = '#ffffff', l = '#c9c4d6', e = '#8f8aa8';
+        return two('M522,754 C538,748 542,734 538,722', l, 10, c, 5.5) + P(ell(PX, 746, 25, 26), c, l) + pboth(P(ell(PX - 10, 767, 8.5, 6), c, l, 2)) + P(ell(PX, 702, 32, 27), c, l) +
+          pboth(P('M478,680 C462,680 452,704 458,724 C472,720 482,704 484,688Z', e, '#6a6588', 2.2)) + pface(702, { nose: '#5a5270' }) + P('M478,727 q22,10 44,0', 'none', '#62d6b8', 5) + U.gem(PX, 734, 4, GOLD, GOLDL);
+      } },
+    { id: 'flowerbun', n: 'はなうさぎ', tags: ['fairy', 'yume', 'princess'], tb: [440, 610, 120, 170],
+      draw() {
+        const c = '#fff0f5', l = '#e0b0c6';
+        return `<circle cx="524" cy="756" r="9" fill="#fff" stroke="${l}" stroke-width="2.5"/>` + P(ell(PX, 746, 24, 26), c, l) + pboth(P(ell(PX - 10, 767, 8, 6), c, l, 2)) +
+          pboth(`<g transform="rotate(-14 486 682)">${P(ell(486, 654, 9.5, 28), c, l)}${P(ell(486, 657, 4.5, 19), '#ffc2d8')}</g>`) + P(ell(PX, 702, 30, 26), c, l) + pface(703) +
+          U.flower(482, 682, 8, '#ff9ec6', '#ffe27a') + U.flower(PX, 677, 9, '#fff3a8', '#ffb347') + U.flower(518, 682, 8, '#c4a7ff', '#ffe27a') + U.bow(PX, 727, 22, 13, '#8de8cc', '#27b592', { sw: 1.5 });
+      } },
   ];
 
   /* ================= くみあわせ ================= */
@@ -336,7 +360,7 @@
     const o = { back: '', headBack: '', neck: '', hand: '', glasses: '', ear: '', head: '', pet: '' };
     const k = A.skin(st);
     const hd = A.HEADS[st.head | 0];
-    if (hd && hd.draw) { const r = hd.draw(C(st.headC | 0)); o.head = r.front || ''; o.headBack = r.back || ''; }
+    if (hd && hd.draw) { const r = hd.draw(C(st.headC | 0), k); o.head = r.front || ''; o.headBack = r.back || ''; }
     const gl = A.GLASSES[st.glasses | 0]; if (gl && gl.draw) o.glasses = gl.draw();
     const er = A.EARS[st.ear | 0]; if (er && er.draw) o.ear = er.draw();
     const nk = A.NECKS[st.neck | 0]; if (nk && nk.draw) o.neck = nk.draw();

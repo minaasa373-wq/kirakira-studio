@@ -25,7 +25,7 @@
     { id: 'bg', n: 'はいけい', icon: '🌈', subs: ['bg'] },
   ];
   const HB_TB = { long: [90, 70, 420, 520], bob: [130, 70, 340, 350], short: [130, 70, 340, 340], twin: [70, 70, 460, 500], pony: [110, 50, 400, 400],
-    buns: [130, 50, 340, 350], wavy: [90, 70, 420, 540], braid: [110, 70, 380, 530], osage: [110, 70, 380, 470], side: [110, 70, 430, 500], hime: [70, 70, 460, 690] };
+    buns: [130, 50, 340, 350], wavy: [90, 70, 420, 540], braid: [110, 70, 380, 530], osage: [110, 70, 380, 470], side: [110, 70, 430, 500], hime: [70, 70, 460, 690], lowtwin: [90, 70, 420, 660] };
   const SCH = { list: A.SCHEMES, n: 'いろ', scheme: true };
   const SUBS = {
     skin: { n: 'はだ', key: 'skin', items: A.SKINS, kind: 'swatch', zoom: 'face', tool: 'puff', fx: [300, 262, 90], say: 'はだの いろを えらんでね' },
@@ -87,6 +87,48 @@
       if (d.best) G.best = d.best;
       if (d.opt) G.opt = Object.assign(G.opt, d.opt);
     } catch (e) { /* こわれていたら さいしょから */ }
+  }
+
+  /* ---------- セーブデータの かきだし・よみこみ ---------- */
+  function exportSave() {
+    const d = new Date(), z = (n) => String(n).padStart(2, '0');
+    const body = JSON.stringify({ app: 'kirakira-oshare-studio', v: 1, date: d.toISOString(), data: { st: G.st, album: G.album, rewards: G.rewards, best: G.best, opt: G.opt } });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([body], { type: 'application/json' }));
+    a.download = `oshare_save_${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    S.play('save'); toast('セーブデータを かきだしたよ！');
+  }
+  function parseSave(text) {
+    const j = JSON.parse(text);
+    if (!j || j.app !== 'kirakira-oshare-studio' || !j.data || typeof j.data.st !== 'object' || !j.data.st) throw new Error('bad save');
+    return j.data;
+  }
+  function applySave(d) {
+    G.st = Object.assign(clone(A.DEFAULT), d.st);
+    G.album = Array.isArray(d.album) ? d.album.filter((p) => p && p.state).slice(0, ALBUM_MAX) : [];
+    G.rewards = Array.isArray(d.rewards) ? d.rewards : [];
+    G.best = d.best && typeof d.best === 'object' ? d.best : {};
+    if (d.opt) { G.opt = Object.assign(G.opt, d.opt); S.setBgm(!!G.opt.bgm); S.setSe(!!G.opt.se); }
+    G.hist = []; save();
+  }
+  function importSave(file) {
+    const rd = new FileReader();
+    rd.onerror = () => toast('よみこめなかったよ');
+    rd.onload = () => {
+      let d;
+      try { d = parseSave(rd.result); } catch (e) { toast('この ファイルは つかえないよ'); return; }
+      modal(`<div class="ic">📂</div><h3>セーブデータを よみこむ？</h3><p>いまの コーデと アルバムは<br>よみこんだ データに かわるよ</p><div class="row"><button class="mid-btn gray" data-act="no">やめる</button><button class="mid-btn pink" data-act="yes">よみこむ</button></div>`, {
+        no: closeModal,
+        yes: () => { applySave(d); closeModal(); renderTitle(); S.play('fanfare'); toast('よみこんだよ！'); },
+      });
+    };
+    rd.readAsText(file);
+  }
+  function saveMenu() {
+    modal(`<div class="ic">💾</div><h3>セーブデータ</h3><p>コーデ・アルバム・おだいの きろくを<br>ファイルに して のこせるよ</p><div class="row"><button class="mid-btn mint" data-act="ex">📤 かきだす</button><button class="mid-btn purple" data-act="im">📂 よみこむ</button></div><div class="row"><button class="mid-btn gray" data-act="no">とじる</button></div>`, {
+      no: closeModal, ex: () => { closeModal(); exportSave(); }, im: () => { closeModal(); $('#saveFile').click(); },
+    });
   }
 
   /* ================= 画面きりかえ ================= */
@@ -537,6 +579,8 @@
     $('#btnAlbum').onclick = () => { S.play('open'); show('album'); };
     $('#optBgm').onclick = $('#stBgm').onclick = toggleBgm;
     $('#optSe').onclick = $('#stSe').onclick = toggleSe;
+    $('#optSave').onclick = () => { S.play('tap'); saveMenu(); };
+    $('#saveFile').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) importSave(f); };
     document.querySelectorAll('[data-go]').forEach((b) => { b.onclick = () => { S.play('tap'); show(b.dataset.go); }; });
 
     $('#btnHome').onclick = () => { S.play('tap'); save(); show('title'); };
