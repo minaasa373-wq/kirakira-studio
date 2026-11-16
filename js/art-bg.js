@@ -236,8 +236,174 @@
         s += U.star(60, 200, 30, '#ffe37a', '#ffe37a', 6) + U.heart(560, 240, 28, '#ff9ec6') + U.star(600, 520, 20, '#c4a7ff', '#c4a7ff', 4) + U.heart(10, 520, 20, '#8ed4ff') + U.sprinkle(111, 16, -120, 40, 720, 640, 6, 12, '#fff', 0.95);
         return s;
       } },
+
+    { id: 'aquarium', n: 'すいぞくかん', tags: ['beach', 'fairy'],
+      draw() {
+        let s = sky([['#0f3a78'], ['#1c6fb8', 0.5], ['#3fb0e0']]);
+        s += glow(300, 120, 380, '#bfefff', 0.35);
+        for (let i = 0; i < 6; i++) s += `<path d="M${-60 + i * 140},-150 L${20 + i * 140},-150 L${-20 + i * 160},${FL} L${-120 + i * 160},${FL}Z" fill="#ffffff" opacity=".06"/>`;
+        const fish = (x, y, sc, c, flip) => `<g transform="translate(${x},${y}) scale(${flip ? -sc : sc},${sc})">` + P('M18,0 L34,-12 L32,0 L34,12Z', U.dark(c, 0.1)) +
+          El(0, 0, 22, 14, c) + P('M-4,-13 q8,-10 16,-2', 'none', U.dark(c, 0.2), 4) + Ci(-11, -3, 3.6, '#fff') + Ci(-12, -3, 1.8, '#1a2a4a') + P('M-2,-8 q4,8 0,16', 'none', '#fff', 2, 'opacity=".6"') + '</g>';
+        s += fish(80, 160, 1.4, '#ffb04a') + fish(500, 120, 1.1, '#ff7fa8', true) + fish(560, 360, 1.5, '#ffe14a', true) + fish(30, 420, 1.1, '#8fe6c8') + fish(420, 250, 0.8, '#c79cff') + fish(160, 300, 0.7, '#7fd4ff', true);
+        /* くじら */
+        s += `<g opacity=".55">` + El(660, 520, 150, 60, '#0c2f66') + P('M500,512 l-60,-40 l10,46 l-14,34Z', '#0c2f66') + '</g>';
+        const r = U.rng(131);
+        for (let i = 0; i < 34; i++) s += Ci(-140 + r() * 880, -40 + r() * 760, 2 + r() * 8, 'none', `stroke="#e8fbff" stroke-width="2" opacity="${f(0.4 + r() * 0.5)}"`);
+        const weed = (x, h, c) => P(`M${x},${FL + 20} C${x - 20},${FL - h * 0.3} ${x + 20},${FL - h * 0.6} ${x},${FL - h}`, 'none', c, 12) + P(`M${x + 16},${FL + 20} C${x},${FL - h * 0.25} ${x + 34},${FL - h * 0.5} ${x + 18},${FL - h * 0.8}`, 'none', U.light(c, 0.2), 9);
+        s += weed(-60, 300, '#2fae7a') + weed(40, 200, '#3fc08a') + weed(560, 260, '#2fae7a') + weed(650, 180, '#3fc08a');
+        s += R(X0, FL, W, H, '#f2dcb0') + P(`M${X0},${FL}` + U.frillLine(X0, FL, X0 + W, FL, 14, -10) + `V${FL + 30}H${X0}Z`, '#e8cf9c');
+        s += U.star(110, 820, 18, '#ff8a70', '#d9603a', 3) + El(500, 860, 26, 14, '#ffd0e4') + P('M480,860 q20,-18 40,0', 'none', '#e89ab8', 2);
+        /* すいそうの わく */
+        s += `<path fill-rule="evenodd" fill="#2a3a5e" d="M${X0},${Y0} h${W} v${H} h${-W}Z M-150,${FL + 40} L-150,40 Q-150,-120 300,-120 Q750,-120 750,40 L750,${FL + 40}Z"/>` +
+          P(`M-150,${FL + 40} L-150,40 Q-150,-120 300,-120 Q750,-120 750,40 L750,${FL + 40}`, 'none', '#7fd0f0', 8, 'opacity=".5"');
+        return s;
+      } },
+
+    { id: 'cakeshop', n: 'ケーキやさん', tags: ['sweets'],
+      draw() {
+        const pt = U.uid('cs');
+        let s = sky([['#fff3e6'], ['#ffe6ee']]) + `<defs><pattern id="${pt}" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="30" height="60" fill="#ffd6e4" opacity=".55"/></pattern></defs>` + R(X0, Y0, W, FL + 150, `url(#${pt})`);
+        /* ひさし */
+        for (let i = 0; i < 16; i++) s += P(`M${-400 + i * 90},-150 h90 v170 q-45,34 -90,0Z`, i % 2 ? '#fff' : '#ff8fb8', '#e8709c', 2);
+        /* たな */
+        const shelf = (y) => R(-340, y, 1280, 14, '#f0c79a', 'rx="4"') + R(-340, y + 14, 1280, 6, '#d9a873');
+        s += shelf(220) + shelf(400);
+        const cupcake = (x, y, c) => P(`M${x - 18},${y} L${x + 18},${y} L${x + 13},${y + 26} L${x - 13},${y + 26}Z`, '#f7c46c', '#c98a35', 2) + P(`M${x - 6},${y + 2} l2,22 M${x + 6},${y + 2} l-2,22`, 'none', '#c98a35', 1.2) +
+          P(`M${x - 22},${y + 2} C${x - 26},${y - 14} ${x - 10},${y - 18} ${x - 6},${y - 22} C${x},${y - 38} ${x + 14},${y - 24} ${x + 10},${y - 16} C${x + 26},${y - 14} ${x + 26},${y} ${x + 22},${y + 2}Z`, c, U.dark(c, 0.2), 2) + Ci(x + 2, y - 30, 5, '#f2485c');
+        s += cupcake(-40, 192, '#ffc2d8') + cupcake(40, 192, '#c8b0ff') + cupcake(560, 192, '#a8ecd8') + cupcake(640, 192, '#ffe680') + cupcake(-20, 372, '#ffe680') + cupcake(620, 372, '#ffc2d8');
+        const jar = (x, y, c) => R(x - 20, y - 50, 40, 50, '#ffffff', 'rx="8" opacity=".8" stroke="#d8c8e0" stroke-width="2"') + Ci(x - 6, y - 14, 6, c) + Ci(x + 7, y - 20, 6, U.light(c, 0.2)) + Ci(x, y - 32, 6, c) + R(x - 22, y - 58, 44, 10, c, 'rx="4"');
+        s += jar(120, 220, '#ff9ec6') + jar(480, 220, '#8fc8ff') + jar(130, 400, '#8de8cc') + jar(470, 400, '#c4a7ff');
+        /* ショーケース */
+        s += R(-360, 560, 1320, 160, '#ffffff', 'stroke="#e8c4d4" stroke-width="4"') + R(-340, 576, 1280, 110, '#e8f6ff', 'opacity=".75"');
+        const cake = (x, y, c) => R(x - 34, y - 34, 68, 34, '#fff3dc', 'stroke="#e0b88a" stroke-width="2"') + R(x - 34, y - 22, 68, 6, c) +
+          P(`M${x - 34},${y - 34}` + U.frillLine(x - 34, y - 34, x + 34, y - 34, 5, 6) + 'Z', '#ffffff', '#e8d0dc', 1.5) + Ci(x, y - 44, 8, '#f2485c') + P(`M${x},${y - 52} q3,-6 8,-6`, 'none', '#4fae62', 2);
+        s += cake(-200, 668, '#ff9ec6') + cake(-80, 668, '#c8b0ff') + cake(680, 668, '#ff9ec6') + cake(800, 668, '#ffe680');
+        s += P('M-340,590 l40,-10 M640,590 l40,-10', 'none', '#fff', 6, 'opacity=".8"');
+        s += R(X0, 720, W, H, '#fbe1c6');
+        for (let x = -400; x < 1000; x += 60) for (let y = 720; y < 1050; y += 60) if (((x + y) / 60) % 2 === 0) s += R(x, y, 60, 60, '#f3cfae');
+        return s;
+      } },
+
+    { id: 'space', n: 'うちゅう', tags: ['space', 'magic'],
+      draw() {
+        let s = sky([['#0b0a2a'], ['#22185a', 0.55], ['#4a2a7a']]);
+        s += glow(120, 200, 260, '#b47cff', 0.35) + glow(520, 420, 300, '#5fa8ff', 0.3);
+        const r = U.rng(171);
+        for (let i = 0; i < 120; i++) { const x = -160 + r() * 920, y = -60 + r() * 760, k = r(); s += k > 0.85 ? U.sparkle(x, y, 4 + r() * 6, k > 0.94 ? '#ffe9a8' : '#fff', 0.95) : Ci(x, y, 0.8 + r() * 1.6, '#fff', `opacity="${f(0.5 + r() * 0.5)}"`); }
+        /* わっかの ほし */
+        s += `<g transform="rotate(-18 540 150)">` + El(540, 150, 110, 24, 'none', 'stroke="#ffd27a" stroke-width="9" opacity=".9"') + '</g>' + Ci(540, 150, 62, '#ff9e7a') +
+          P('M486,132 Q540,120 594,136 M482,158 Q540,150 598,166', 'none', '#e8705a', 7, 'opacity=".6"') + `<g transform="rotate(-18 540 150)"><path d="M430,150 A110,24 0 0 0 650,150" fill="none" stroke="#ffd27a" stroke-width="9"/></g>`;
+        s += Ci(40, 120, 40, '#8fd8ff') + P('M14,108 q20,-10 40,6 M20,134 q24,6 44,-8', 'none', '#5fb0e8', 6) + Ci(30, 108, 8, '#fff', 'opacity=".5"');
+        s += Ci(-60, 420, 22, '#c8a8ff') + Ci(640, 520, 16, '#ffe680');
+        /* ロケット */
+        s += `<g transform="translate(150,330) rotate(32)">` + P('M0,-60 C22,-40 24,10 18,40 L-18,40 C-24,10 -22,-40 0,-60Z', '#ffffff', '#b8b0d8', 3) + Ci(0, -14, 11, '#7fd0ff', 'stroke="#b8b0d8" stroke-width="3"') +
+          P('M-18,20 L-34,48 L-16,42Z M18,20 L34,48 L16,42Z', '#f2485c', '#b8182e', 2) + P('M-10,42 Q0,80 10,42Z', '#ffc94a') + P('M-6,42 Q0,64 6,42Z', '#fff3a8') + '</g>';
+        /* つきの じめん */
+        s += R(X0, FL, W, H, '#d8d2e8') + P(`M${X0},${FL} Q-100,${FL - 30} 100,${FL - 6} T500,${FL - 10} T${X0 + W},${FL}V${FL + 40}H${X0}Z`, '#e8e4f2');
+        s += El(-40, 820, 60, 16, '#bdb4d6') + El(520, 870, 80, 20, '#bdb4d6') + El(140, 940, 40, 10, '#bdb4d6') + El(380, 760, 30, 8, '#c8c0e0');
+        s += P('M620,720 L620,640', 'none', '#b8b0d8', 4) + P('M620,640 L670,654 L620,668Z', '#ff9ec6') + U.star(645, 654, 6, '#fff', '#fff', 1);
+        return s;
+      } },
+
+    { id: 'halloween', n: 'ハロウィンのよる', tags: ['halloween', 'magic'],
+      draw() {
+        let s = sky([['#2a1650'], ['#5a2a7a', 0.55], ['#ff9a5c']]);
+        s += glow(480, 150, 230, '#ffe9a8', 0.5) + Ci(480, 150, 78, '#fff3c4') + Ci(462, 132, 12, '#f3e0a0', 'opacity=".6"') + Ci(500, 175, 8, '#f3e0a0', 'opacity=".6"');
+        const bat = (x, y, sc) => `<g transform="translate(${x},${y}) scale(${sc})">` + P('M0,0 C-8,-10 -22,-12 -34,-4 C-28,-2 -26,4 -28,8 C-20,4 -12,6 -8,10 C-6,4 -3,2 0,2 C3,2 6,4 8,10 C12,6 20,4 28,8 C26,4 28,-2 34,-4 C22,-12 8,-10 0,0Z', '#2a1a3a') + Ci(-3, -2, 1.4, '#ffe680') + Ci(3, -2, 1.4, '#ffe680') + '</g>';
+        s += bat(100, 120, 1.4) + bat(600, 300, 1.1) + bat(230, 60, 0.9) + bat(-60, 260, 1);
+        const r = U.rng(41);
+        for (let i = 0; i < 40; i++) s += Ci(-160 + r() * 920, -40 + r() * 400, 0.8 + r() * 1.4, '#fff', `opacity="${f(0.4 + r() * 0.5)}"`);
+        /* おやしき */
+        s += P('M-40,700 L-40,420 L20,360 L80,420 L80,470 L150,470 L150,380 L200,320 L250,380 L250,700Z', '#3a2456') + R(-10, 470, 30, 40, '#ffd27a', 'rx="15"') + R(170, 400, 26, 34, '#ffd27a', 'rx="13"') + R(100, 540, 34, 44, '#ffd27a', 'rx="4"') + P('M195,320 l5,-26 l5,26Z', '#3a2456');
+        s += hill(-100, 760, 500, 140, '#3a2a50') + hill(720, 770, 520, 160, '#33244a') + hill(300, 980, 900, 300, '#47306a');
+        const pk = (x, y, sc) => `<g transform="translate(${x},${y}) scale(${sc})">` + El(0, 0, 40, 32, '#ff8a2c', 'stroke="#c9601a" stroke-width="3"') + P('M-14,-30 Q-20,0 -14,30 M14,-30 Q20,0 14,30', 'none', '#c9601a', 2.5) +
+          P('M-3,-32 q2,-14 10,-16', 'none', '#4f8a3a', 6) + P('M-22,-6 l8,-8 l8,8Z M6,-6 l8,-8 l8,8Z', '#ffe680') + P('M-20,8 q20,16 40,0 l-6,4 l-4,-4 l-5,5 l-5,-5 l-5,5 l-5,-5 l-4,4Z', '#ffe680') + '</g>';
+        s += pk(60, 790, 1.3) + pk(520, 800, 1.1) + pk(620, 760, 0.8) + pk(-80, 770, 0.9);
+        s += [[150, 840, '#ff7fb2'], [430, 860, '#8de8cc'], [-20, 880, '#ffe680']].map((p) => `<g transform="translate(${p[0]},${p[1]}) rotate(-20)">` + El(0, 0, 14, 9, p[2]) + P('M-14,0 l-10,-7 l0,14Z M14,0 l10,-7 l0,14Z', p[2]) + '</g>').join('');
+        return s;
+      } },
+    { id: 'xmas', n: 'クリスマスのよる', tags: ['xmas', 'winter'],
+      draw() {
+        let s = sky([['#16204e'], ['#2f3f8a', 0.6], ['#6a7ac0']]);
+        const r = U.rng(61);
+        for (let i = 0; i < 60; i++) s += Ci(-160 + r() * 920, -40 + r() * 600, 0.8 + r() * 1.6, '#fff', `opacity="${f(0.4 + r() * 0.6)}"`);
+        s += hill(-120, 760, 500, 140, '#e4eeff') + hill(720, 760, 520, 160, '#dbe7ff');
+        /* ツリー */
+        const tx = 560;
+        s += R(tx - 16, 600, 32, 70, '#8a5a3a');
+        [[600, 150], [520, 120], [440, 92], [370, 64]].forEach((p) => { s += P(`M${tx - p[1]},${p[0]} L${tx},${p[0] - 150} L${tx + p[1]},${p[0]}Z`, '#3fae6a', '#2a8050', 3); });
+        s += P(`M${tx - 120},560 Q${tx},600 ${tx + 110},540 M${tx - 90},470 Q${tx},500 ${tx + 80},450 M${tx - 60},390 Q${tx},410 ${tx + 50},375`, 'none', '#ffd24a', 4);
+        [[-80, 560, '#f2485c'], [60, 575, '#8ed4ff'], [-40, 480, '#ffd24a'], [50, 460, '#ff7fb2'], [-20, 400, '#8ed4ff'], [30, 330, '#f2485c'], [-100, 590, '#ffd24a'], [100, 520, '#f2485c']].forEach((p) => { s += U.gem(tx + p[0], p[1], 9, p[2]); });
+        s += U.star(tx, 222, 30, '#ffe680', '#e0a020', 4) + glow(tx, 222, 70, '#fff3a8', 0.6);
+        const gift = (x, y, w, h, c, rb) => R(x, y, w, h, c, `stroke="${U.dark(c, 0.25)}" stroke-width="2"`) + R(x + w / 2 - 5, y, 10, h, rb) + R(x, y + h / 2 - 4, w, 8, rb) + U.bow(x + w / 2, y - 4, 30, 16, rb, U.dark(rb, 0.3), { sw: 1.5 });
+        s += gift(470, 640, 60, 44, '#ff7fb2', '#ffe680') + gift(590, 650, 50, 36, '#8ed4ff', '#f2485c') + gift(530, 670, 46, 34, '#c4a7ff', '#ffffff');
+        /* ライト */
+        s += P('M-200,60 Q100,140 300,80 Q500,30 800,110', 'none', '#2a3a6a', 2.5);
+        const lc = ['#ff7fb2', '#ffe680', '#8ed4ff', '#8de8cc', '#f2485c'];
+        for (let i = 0; i < 16; i++) { const t = i / 15, x = -180 + 960 * t, y = 60 + Math.sin(t * Math.PI * 2) * 30 + 30; s += glow(x, y + 10, 18, lc[i % 5], 0.7) + El(x, y + 10, 6, 9, lc[i % 5]); }
+        s += hill(300, 980, 900, 300, '#ffffff');
+        for (let i = 0; i < 40; i++) s += Ci(-160 + r() * 920, -20 + r() * 800, 2 + r() * 3, '#fff', 'opacity=".85"');
+        return s;
+      } },
   ];
   A.bg = (i) => (A.BGS[i] || A.BGS[0]).draw();
+  /* ついかアイテム（art-plus2.js）で つかう どうぐ */
+  A._bk = { X0, Y0, W, H, FL, R, Ci, El, sky, cloud, hill, glow };
+
+  /* ================= てんき ================= */
+  A.WEATHERS = [
+    { id: 'none', n: 'なし' }, { id: 'rain', n: 'あめ' }, { id: 'snow', n: 'ゆき' }, { id: 'sakura', n: 'はなびら' }, { id: 'leaf', n: 'おちば' },
+    { id: 'bubble', n: 'シャボンだま' }, { id: 'star', n: 'ながれぼし' }, { id: 'heart', n: 'ハート' }, { id: 'kira', n: 'キラキラ' },
+  ];
+  const WX = {
+    rain: { n: 46, dur: [0.7, 1.05], dx: -90 },
+    snow: { n: 44, dur: [7, 12], dx: 40, sway: 22 },
+    sakura: { n: 30, dur: [7, 11], dx: 130, sway: 30, spin: 1 },
+    leaf: { n: 24, dur: [6, 10], dx: 90, sway: 36, spin: 1 },
+    bubble: { n: 18, dur: [8, 13], up: 1, dx: -30, sway: 26 },
+    star: { n: 9, dur: [2.4, 3.8], dx: -560, dy: 780 },
+    heart: { n: 22, dur: [7, 11], up: 1, dx: 0, sway: 24 },
+    kira: { n: 32, twinkle: 1 },
+  };
+  const AT = (type, values, dur, extra) => `<animateTransform attributeName="transform" type="${type}" values="${values}" dur="${f(dur)}s" repeatCount="indefinite"${extra || ''}/>`;
+  function wxPart(id, sz, r) {
+    switch (id) {
+      case 'rain': return `<line x1="0" y1="0" x2="-3.5" y2="${f(20 * sz + 12)}" stroke="#dbe9ff" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>`;
+      case 'snow': return r() < 0.2 ? U.sparkle(0, 0, 6 + 5 * sz, '#ffffff', 0.95) : `<circle r="${f(3 + 5 * sz)}" fill="#ffffff" opacity=".92"/>`;
+      case 'sakura': return `<g transform="scale(${f(0.9 + sz * 0.8)})">` + P('M0,-5 L-2,-8 C-7,-8 -9,-2 -6,3 L0,9 L6,3 C9,-2 7,-8 2,-8Z', '#ffc2dc', '#f39bc0', 1) + '</g>';
+      case 'leaf': { const c = ['#ff9a3c', '#f2485c', '#ffc94a', '#d9803a'][Math.floor(r() * 4)];
+        return `<g transform="scale(${f(1 + sz * 0.8)})">` + P('M0,-10 C8,-6 8,6 0,10 C-8,6 -8,-6 0,-10Z', c, U.dark(c, 0.25), 1.2) + P('M0,-9 L0,11', 'none', U.dark(c, 0.3), 1) + '</g>'; }
+      case 'bubble': { const rr = 9 + 14 * sz; return `<circle r="${f(rr)}" fill="#ffffff" fill-opacity=".14" stroke="#cfeaff" stroke-width="2"/>` +
+        `<path d="M${f(-rr * 0.55)},${f(-rr * 0.3)} a${f(rr * 0.6)},${f(rr * 0.6)} 0 0 1 ${f(rr * 0.45)},${f(-rr * 0.35)}" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>` +
+        `<circle r="${f(rr)}" fill="none" stroke="#ffc2e8" stroke-width="1.2" stroke-dasharray="${f(rr)} ${f(rr * 2)}" opacity=".9"/>`; }
+      case 'star': return `<line x1="0" y1="0" x2="58" y2="-80" stroke="#fff7c2" stroke-width="4" stroke-linecap="round" opacity=".45"/><line x1="0" y1="0" x2="30" y2="-41" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>` + U.star(0, 0, 9, '#fff3a8', '#ffe27a', 1.5);
+      case 'heart': return U.heart(0, 0, 4 + 7 * sz, ['#ff7fb2', '#ff9ec6', '#ffc2dc', '#c4a7ff'][Math.floor(r() * 4)], '#ffffff', 1.6);
+      case 'kira': return U.sparkle(0, 0, 6 + 9 * sz, r() < 0.5 ? '#fff7c2' : '#ffffff', 0.95);
+    }
+    return '';
+  }
+  A.weather = function (i, live) {
+    const w = A.WEATHERS[i | 0]; if (!w || !(i | 0)) return '';
+    const cfg = WX[w.id], r = U.rng(900 + (i | 0) * 37);
+    let s = w.id === 'rain' ? `<rect x="-700" y="-500" width="2000" height="1800" fill="#3a4a7a" opacity=".13"/>` : '';
+    for (let k = 0; k < cfg.n; k++) {
+      const x = (w.id === 'star' ? 0 : -180) + r() * (w.id === 'star' ? 1100 : 960), fr = r(), sz = r();
+      const dur = cfg.dur ? cfg.dur[0] + r() * (cfg.dur[1] - cfg.dur[0]) : 0;
+      let inner = wxPart(w.id, sz, r);
+      if (cfg.twinkle) {
+        const y = -60 + r() * 900;
+        s += `<g transform="translate(${f(x)},${f(y)})">` + (live ? `<g>${AT('scale', '0;1;0', 1.4 + r() * 1.8, ` begin="-${f(r() * 3)}s"`)}${inner}</g>` : `<g transform="scale(${f(0.4 + fr * 0.6)})">${inner}</g>`) + '</g>';
+        continue;
+      }
+      const dy = cfg.dy || (cfg.up ? -1060 : 1060), y0 = cfg.up ? 900 : -140;
+      if (cfg.spin) inner = live ? `<g>${AT('rotate', `0 0 0;${r() < 0.5 ? 360 : -360} 0 0`, 3 + r() * 4)}${inner}</g>` : `<g transform="rotate(${f(r() * 360)})">${inner}</g>`;
+      if (cfg.sway && live) inner = `<g>${AT('translate', `0 0;${cfg.sway} 0;0 0;${-cfg.sway} 0;0 0`, 2.5 + r() * 2.5, ` begin="-${f(r() * 4)}s"`)}${inner}</g>`;
+      const move = live ? `<g>${AT('translate', `0 0;${cfg.dx} ${dy}`, dur, ` begin="-${f(fr * dur)}s"`)}${inner}</g>`
+        : `<g transform="translate(${f(cfg.dx * fr)},${f(dy * fr)})">${inner}</g>`;
+      s += `<g transform="translate(${f(x)},${y0})">${move}</g>`;
+    }
+    return `<g pointer-events="none">${s}</g>`;
+  };
 
   /* ================= フレーム ================= */
   function edgePts(vb, inset, step) {
@@ -265,8 +431,31 @@
     { id: 'photo', n: 'しゃしん', draw: (vb) => `<path fill-rule="evenodd" fill="#fff" d="M${vb[0]},${vb[1]} h${vb[2]} v${vb[3]} h-${vb[2]}Z M${vb[0] + 26},${vb[1] + 26} v${vb[3] - 150} h${vb[2] - 52} v-${vb[3] - 150}Z"/>` +
         `<text x="${vb[0] + vb[2] / 2}" y="${vb[1] + vb[3] - 54}" text-anchor="middle" font-size="52" font-weight="bold" fill="#ff7fb0" font-family="'UD デジタル 教科書体 NK-B','Hiragino Maru Gothic ProN','Yu Gothic UI',sans-serif">だいすき</text>` +
         U.heart(vb[0] + 110, vb[1] + vb[3] - 72, 16, '#ff9ec6') + U.heart(vb[0] + vb[2] - 110, vb[1] + vb[3] - 72, 16, '#ff9ec6') + U.star(vb[0] + 60, vb[1] + vb[3] - 50, 10, '#ffe37a', '#ffe37a', 2) + U.star(vb[0] + vb[2] - 60, vb[1] + vb[3] - 50, 10, '#ffe37a', '#ffe37a', 2) },
+    { id: 'strawberry', n: 'いちご', draw: (vb) => border(vb, 14, 30, '#ffd0dc') + border(vb, 30, 3, '#f2485c', 10, 'stroke-dasharray="2 10" stroke-linecap="round"') +
+        edgePts(vb, 15, 62).map((p, i) => (i % 2 ? U.flower(p[0], p[1], 9, '#ffffff', '#ffd24a', 5, '#f0a0b8') :
+          P(`M${p[0] - 11},${p[1] - 4} C${p[0] - 11},${p[1] - 10} ${p[0] + 11},${p[1] - 10} ${p[0] + 11},${p[1] - 4} C${p[0] + 11},${p[1] + 8} ${p[0] + 2},${p[1] + 14} ${p[0]},${p[1] + 15} C${p[0] - 2},${p[1] + 14} ${p[0] - 11},${p[1] + 8} ${p[0] - 11},${p[1] - 4}Z`, '#f2485c', '#b8182e', 1.6) +
+          P(`M${p[0] - 8},${p[1] - 8} l4,-6 l4,4 l4,-4 l4,6Z`, '#5fbf6a', '#3a9048', 1) + `<circle cx="${p[0] - 4}" cy="${p[1]}" r="1.2" fill="#ffe680"/><circle cx="${p[0] + 4}" cy="${p[1] + 2}" r="1.2" fill="#ffe680"/><circle cx="${p[0]}" cy="${p[1] + 7}" r="1.2" fill="#ffe680"/>`)).join('') },
+    { id: 'lace', n: 'ゆめかわレース', draw: (vb) => {
+        const id = U.uid('lc'), x0 = vb[0], y0 = vb[1], x1 = vb[0] + vb[2], y1 = vb[1] + vb[3], t = 34;
+        let s = `<defs>${U.lin(id, [['#ffc2e0'], ['#d8c4ff'], ['#bfe4ff']], 0, 0, 1, 1)}</defs>`;
+        s += `<path fill-rule="evenodd" fill="url(#${id})" d="M${x0},${y0} H${x1} V${y1} H${x0}Z M${x0 + t},${y0 + t} V${y1 - t} H${x1 - t} V${y0 + t}Z"/>`;
+        const ld = `M${x0 + t},${y0 + t}` + U.frillLine(x0 + t, y0 + t, x1 - t, y0 + t, 14, -9) + U.frillLine(x1 - t, y0 + t, x1 - t, y1 - t, 18, -9) + U.frillLine(x1 - t, y1 - t, x0 + t, y1 - t, 14, -9) + U.frillLine(x0 + t, y1 - t, x0 + t, y0 + t, 18, -9);
+        s += P(ld, 'none', '#f0c4dc', 9) + P(ld, 'none', '#ffffff', 6);
+        s += border(vb, 17, 2.5, '#ffffff', 6, 'stroke-dasharray="1 8" stroke-linecap="round" opacity=".9"');
+        s += [[x0 + 34, y0 + 34], [x1 - 34, y0 + 34], [x0 + 34, y1 - 34], [x1 - 34, y1 - 34]].map((p) => U.bow(p[0], p[1], 50, 30, '#ffffff', '#e8a8cc', { sw: 2, knot: '#ffc2e0' })).join('');
+        return s + U.sprinkle(77, 14, x0, y0, x1, y0 + 30, 3, 6, '#fff', 0.9) + U.sprinkle(78, 14, x0, y1 - 30, x1, y1, 3, 6, '#fff', 0.9);
+      } },
+    { id: 'polaroid', n: 'ポラロイド', draw: (vb, date) => {
+        const d = new Date(date || Date.now());
+        const txt = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+        return `<path fill-rule="evenodd" fill="#fffdf8" d="M${vb[0]},${vb[1]} h${vb[2]} v${vb[3]} h-${vb[2]}Z M${vb[0] + 30},${vb[1] + 30} v${vb[3] - 190} h${vb[2] - 60} v-${vb[3] - 190}Z"/>` +
+          `<rect x="${vb[0] + 30}" y="${vb[1] + 30}" width="${vb[2] - 60}" height="${vb[3] - 190}" fill="none" stroke="#e8e0d8" stroke-width="2"/>` +
+          `<text x="${vb[0] + vb[2] - 60}" y="${vb[1] + vb[3] - 80}" text-anchor="end" font-size="40" font-weight="bold" fill="#ff8a3c" opacity=".9" font-family="'Courier New',monospace">${txt}</text>` +
+          `<text x="${vb[0] + 64}" y="${vb[1] + vb[3] - 74}" font-size="46" font-weight="bold" fill="#a88cd8" font-family="'UD デジタル 教科書体 NK-B','Hiragino Maru Gothic ProN','Yu Gothic UI',sans-serif">♡ おもいで</text>` +
+          `<rect x="${vb[0] + vb[2] / 2 - 70}" y="${vb[1] - 14}" width="140" height="44" fill="#ffe9a8" opacity=".85" transform="rotate(-4 ${vb[0] + vb[2] / 2} ${vb[1] + 8})"/>`;
+      } },
   ];
-  A.frame = (i, vb) => (A.FRAMES[i] ? A.FRAMES[i].draw(vb) : '');
+  A.frame = (i, vb, date) => (A.FRAMES[i] ? A.FRAMES[i].draw(vb, date) : '');
 
   /* ================= スタンプ（原点中心・だいたい半径40） ================= */
   const TXT = (t, sz, fill, st) => `<text x="0" y="${f(sz * 0.36)}" text-anchor="middle" font-size="${sz}" font-weight="bold" fill="${fill}" stroke="${st}" stroke-width="6" paint-order="stroke" stroke-linejoin="round" font-family="'UD デジタル 教科書体 NK-B','Hiragino Maru Gothic ProN','Yu Gothic UI',sans-serif">${t}</text>`;
@@ -282,6 +471,13 @@
     { id: 'paw', n: 'にくきゅう', draw: () => El(0, 12, 22, 18, '#ffb3d1', 'stroke="#fff" stroke-width="5"') + [[-24, -10], [-9, -24], [9, -24], [24, -10]].map((p) => El(p[0], p[1], 9, 11, '#ffb3d1', 'stroke="#fff" stroke-width="5"')).join('') + El(0, 12, 22, 18, '#ff9ec6') + [[-24, -10], [-9, -24], [9, -24], [24, -10]].map((p) => El(p[0], p[1], 9, 11, '#ff9ec6')).join('') },
     { id: 'kawaii', n: 'かわいい', draw: () => `<rect x="-62" y="-26" width="124" height="52" rx="26" fill="#fff" stroke="#ff9ec6" stroke-width="4"/>` + TXT('かわいい', 26, '#ff5c93', '#fff') },
     { id: 'suki', n: 'すき', draw: () => U.heart(0, 2, 38, '#fff', '#ff9ec6', 4) + TXT('すき', 26, '#ff5c93', '#fff') },
+    { id: 'cake', n: 'ケーキ', draw: () => P('M-34,-4 L30,-26 L34,24 L-30,30Z', '#fff', '#fff', 10) + P('M-30,0 L30,-20 L32,22 L-28,28Z', '#fff3dc', '#e0b88a', 2.5) + P('M-29,10 L31,-6 L31.5,4 L-28.5,20Z', '#ff9ec6') +
+        P('M-30,0 L30,-20 L22,-30 L-36,-10Z', '#ffffff', '#e8d0dc', 2) + Ci(-4, -24, 9, '#f2485c', 'stroke="#fff" stroke-width="3"') + P('M-4,-32 q4,-8 10,-6', 'none', '#4fae62', 3) + Ci(-7, -27, 2.4, '#fff', 'opacity=".8"') },
+    { id: 'rocket', n: 'ロケット', draw: () => `<g transform="rotate(30)">` + P('M0,-42 C16,-28 17,6 13,28 L-13,28 C-17,6 -16,-28 0,-42Z', '#fff', '#fff', 9) + P('M0,-42 C16,-28 17,6 13,28 L-13,28 C-17,6 -16,-28 0,-42Z', '#ffffff', '#8a90c8', 2.5) +
+        Ci(0, -10, 8, '#7fd0ff', 'stroke="#8a90c8" stroke-width="2.5"') + P('M-13,14 L-25,34 L-12,30Z M13,14 L25,34 L12,30Z', '#f2485c', '#b8182e', 2) + P('M-8,30 Q0,58 8,30Z', '#ffc94a') + P('M-4,30 Q0,46 4,30Z', '#fff3a8') + '</g>' + U.sparkle(-30, -26, 7, '#ffe680') + U.sparkle(32, -34, 5, '#ffe680') },
+    { id: 'sun', n: 'おひさま', draw: () => { let s = ''; for (let i = 0; i < 12; i++) s += `<path d="M0,-40 L6,-28 L-6,-28Z" fill="#ffb347" transform="rotate(${i * 30})"/>`;
+        return Ci(0, 0, 40, '#fff') + s + Ci(0, 0, 25, '#ffd94a', 'stroke="#f0a020" stroke-width="2.5"') + P('M-11,-4 q4,-5 8,0 M3,-4 q4,-5 8,0', 'none', '#7a4a20', 2.6) +
+          P('M-8,7 Q0,15 8,7', 'none', '#7a4a20', 2.6) + El(-14, 5, 4.5, 3, '#ff9c7a', 'opacity=".8"') + El(14, 5, 4.5, 3, '#ff9c7a', 'opacity=".8"'); } },
     /* ごほうびスタンプ（おだいクリアで ふえる） */
     { id: 'r_princess', n: 'ティアラ', reward: 'princess', draw: () => P('M-38,22 L-32,-8 L-18,8 L-8,-22 L0,2 L8,-22 L18,8 L32,-8 L38,22Z', '#ffd24a', '#fff', 8) + P('M-38,22 L-32,-8 L-18,8 L-8,-22 L0,2 L8,-22 L18,8 L32,-8 L38,22Z', '#ffd24a', '#d99a18', 2.5) + U.gem(0, 12, 6, '#ff5c93') + U.gem(-20, 14, 4, '#7fd4ff') + U.gem(20, 14, 4, '#7fd4ff') + U.sparkle(26, -24, 8, '#fff') },
     { id: 'r_idol', n: 'マイク', reward: 'idol', draw: () => `<g transform="rotate(30)">` + R(-7, -4, 14, 44, '#5a5278', 'rx="6" stroke="#fff" stroke-width="5"') + Ci(0, -18, 20, '#dfe3f0', 'stroke="#fff" stroke-width="5"') + R(-7, -4, 14, 44, '#5a5278', 'rx="6"') + Ci(0, -18, 18, '#dfe3f0', 'stroke="#8a90a8" stroke-width="2"') + R(-9, 0, 18, 8, '#ff7fb0', 'rx="3"') + P('M-14,-22 q14,-8 28,0 M-15,-12 q15,8 30,0', 'none', '#8a90a8', 1.5) + '</g>' + U.star(30, -24, 9, '#ffe14a', '#ffe14a', 2) + U.sparkle(-30, 6, 8, '#fff7c2') },
@@ -296,6 +492,18 @@
     { id: 'r_ballet', n: 'トウシューズ', reward: 'ballet', draw: () => P('M-12,-34 L16,-6 M14,-34 L-12,-8', 'none', '#fff', 9) + P('M-12,-34 L16,-6 M14,-34 L-12,-8', 'none', '#ff9ec6', 4) + P('M-20,4 C-20,-10 -8,-10 -4,-4 C2,2 8,2 12,-4 C16,-10 26,-10 26,4 C26,26 14,36 2,36 C-10,36 -20,26 -20,4Z', '#ffc2dc', '#fff', 6) + P('M-20,4 C-20,-10 -8,-10 -4,-4 C2,2 8,2 12,-4 C16,-10 26,-10 26,4 C26,26 14,36 2,36 C-10,36 -20,26 -20,4Z', '#ffc2dc', '#e889b0', 2.5) + U.bow(2, -36, 26, 15, '#ff9ec6', '#e06a9c', { sw: 1.6 }) },
     { id: 'r_school', n: 'ランドセル', reward: 'school', draw: () => P('M-30,-20 Q-30,-38 -12,-38 H12 Q30,-38 30,-20 V28 Q30,38 20,38 H-20 Q-30,38 -30,28Z', '#f2485c', '#fff', 7) + P('M-30,-20 Q-30,-38 -12,-38 H12 Q30,-38 30,-20 V28 Q30,38 20,38 H-20 Q-30,38 -30,28Z', '#f2485c', '#b8182e', 2.5) + P('M-30,-6 Q0,10 30,-6 V-20 Q30,-38 12,-38 H-12 Q-30,-38 -30,-20Z', '#ff6f80', '#b8182e', 2.5) + R(-7, -4, 14, 16, '#ffd24a', 'rx="4" stroke="#c9860f" stroke-width="2"') + P('M-18,-30 q6,-4 14,-4', 'none', '#fff', 4, 'opacity=".6"') },
     { id: 'r_casual', n: 'にこちゃん', reward: 'casual', draw: () => Ci(0, 0, 36, '#ffe14a', 'stroke="#fff" stroke-width="7"') + Ci(0, 0, 33, '#ffe14a', 'stroke="#f0a820" stroke-width="2.5"') + El(-12, -6, 4.5, 6.5, '#5a3a2a') + El(12, -6, 4.5, 6.5, '#5a3a2a') + P('M-16,8 Q0,26 16,8', 'none', '#5a3a2a', 4) + El(-21, 8, 6, 4, '#ff9c9c', 'opacity=".8"') + El(21, 8, 6, 4, '#ff9c9c', 'opacity=".8"') },
+    { id: 'r_doctor', n: 'ハートのばんそうこう', reward: 'doctor', draw: () => `<g transform="rotate(-24)">` + R(-44, -16, 88, 32, '#fff', 'rx="16"') + R(-40, -12, 80, 24, '#ffd8b5', 'rx="12" stroke="#e0a377" stroke-width="2"') +
+        R(-13, -11, 26, 22, '#fff0de') + U.heart(0, 0, 8, '#ff7fa6') + [[-30, -4], [-24, 4], [24, -4], [30, 4]].map((p) => Ci(p[0], p[1], 1.6, '#e0a377')).join('') + '</g>' },
+    { id: 'r_space', n: 'わっかのほし', reward: 'space', draw: () => `<g transform="rotate(-20)">` + El(0, 0, 46, 12, 'none', 'stroke="#fff" stroke-width="12"') + El(0, 0, 46, 12, 'none', 'stroke="#ffd27a" stroke-width="6"') + '</g>' +
+        Ci(0, 0, 24, '#ff9e7a', 'stroke="#fff" stroke-width="4"') + P('M-20,-6 Q0,-12 20,-4 M-18,8 Q0,4 20,10', 'none', '#e8705a', 4, 'opacity=".6"') +
+        `<g transform="rotate(-20)"><path d="M-46,0 A46,12 0 0 0 46,0" fill="none" stroke="#ffd27a" stroke-width="6"/></g>` + U.sparkle(34, -30, 7, '#fff7c2') },
+    { id: 'r_sweets', n: 'マカロン', reward: 'sweets', draw: () => El(0, -14, 36, 14, '#ffb3d1', 'stroke="#fff" stroke-width="6"') + El(0, 14, 36, 14, '#ffb3d1', 'stroke="#fff" stroke-width="6"') +
+        El(0, -14, 36, 14, '#ffb3d1', 'stroke="#e07fa8" stroke-width="2"') + El(0, 14, 36, 14, '#ffb3d1', 'stroke="#e07fa8" stroke-width="2"') + R(-34, -6, 68, 12, '#fff8f0', 'rx="6" stroke="#e8c8d4" stroke-width="1.5"') +
+        P('M-22,-22 q10,-6 22,-4', 'none', '#fff', 4, 'opacity=".7"') + U.sparkle(36, -30, 6, '#fff7c2') },
+    { id: 'r_halloween', n: 'かぼちゃ', reward: 'halloween', draw: () => El(0, 4, 40, 32, '#fff') + El(0, 4, 36, 28, '#ff8a2c', 'stroke="#c9601a" stroke-width="2.5"') + P('M-12,-22 Q-18,4 -12,30 M12,-22 Q18,4 12,30', 'none', '#c9601a', 2) +
+        P('M-2,-24 q2,-12 9,-14', 'none', '#4f8a3a', 5) + P('M-20,-2 l7,-8 l7,8Z M6,-2 l7,-8 l7,8Z', '#ffe680') + P('M-17,12 q17,14 34,0 l-5,4 l-4,-4 l-4,4 l-4,-4 l-4,4 l-4,-4 l-4,4Z', '#ffe680') },
+    { id: 'r_xmas', n: 'ツリー', reward: 'xmas', draw: () => P('M0,-42 L30,0 L18,0 L38,26 L-38,26 L-18,0 L-30,0Z', '#fff', '#fff', 8) + P('M0,-42 L30,0 L18,0 L38,26 L-38,26 L-18,0 L-30,0Z', '#3fae6a', '#2a8050', 2.5) +
+        R(-7, 26, 14, 12, '#8a5a3a') + U.star(0, -42, 10, '#ffe680', '#e0a020', 2) + U.gem(-12, 4, 4, '#f2485c') + U.gem(14, 12, 4, '#8ed4ff') + U.gem(4, -14, 3.6, '#ffd24a') + U.gem(-20, 20, 3.6, '#ff7fb2') },
   ];
   A.stampIndex = {}; A.STAMPS.forEach((s) => { A.stampIndex[s.id] = s; });
   A.stamp = (id, x, y, sc, rot) => { const s = A.stampIndex[id]; return s ? `<g transform="translate(${f(x)},${f(y)}) rotate(${f(rot || 0)}) scale(${f(sc || 1)})">${s.draw()}</g>` : ''; };

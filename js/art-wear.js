@@ -41,17 +41,18 @@
     const p1 = [x1 + AN[0] * r1, y1 + AN[1] * r1], p2 = [p[0] + AN[0] * r2, p[1] + AN[1] * r2];
     const p3 = [p[0] - AN[0] * r2, p[1] - AN[1] * r2], p4 = [x1 - AN[0] * r1, y1 - AN[1] * r1];
     const d = `M${f(p1[0])},${f(p1[1])}L${f(p2[0])},${f(p2[1])}Q${f(p[0] + AD[0] * 3)},${f(p[1] + AD[1] * 3)} ${f(p3[0])},${f(p3[1])}L${f(p4[0])},${f(p4[1])}A${r1},${r1} 0 0 1 ${f(p1[0])},${f(p1[1])}Z`;
-    return U.both(P(d, fill, line));
+    return A.armBoth(P(d, fill, line));
   };
   /* そで口・リストバンド：うでに直角な帯 */
   const cuff = (t0, t1, r, fill, line) => {
     const a = armP(t0), b = armP(t1);
     const d = `M${f(a[0] + AN[0] * r)},${f(a[1] + AN[1] * r)}Q${f(a[0] + AD[0] * 2)},${f(a[1] + AD[1] * 2)} ${f(a[0] - AN[0] * r)},${f(a[1] - AN[1] * r)}` +
       `L${f(b[0] - AN[0] * r)},${f(b[1] - AN[1] * r)}Q${f(b[0] + AD[0] * 3)},${f(b[1] + AD[1] * 3)} ${f(b[0] + AN[0] * r)},${f(b[1] + AN[1] * r)}Z`;
-    return U.both(P(d, fill, line, 2));
+    return A.armBoth(P(d, fill, line, 2));
   };
   const puff = (fill, line, band) => U.both(P('M259,381 C247,371 226,374 221,392 C217,407 225,421 240,423 C253,424 262,414 263,399Z', fill, line) +
     (band ? P('M223,410 C231,421 248,424 260,415', 'none', band, 4.5) : '') + P('M236,381 q-6,10 -4,22', 'none', line, 1.4, 'opacity=".35"'));
+  const R = (x, y, w, h, fill, ex) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}"${ex ? ' ' + ex : ''}/>`;
   const clipG = (d, inner) => { const id = U.uid('cl'); return `<defs><clipPath id="${id}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${id})">${inner}</g>`; };
 
   function skirt(len, flare, o) {
@@ -167,7 +168,7 @@
         let sl = P(SL, c.M, c.ml) + clipG(SL, U.flower(226, 440, 9, c.s, c.a) + U.flower(236, 494, 8, c.a, c.s) + U.flower(214, 500, 7, c.s, c.a)) +
           P('M199,490 C203,506 210,518 217,527', 'none', c.s, 3);
         const b = c.defs + U.bow(300, 452, 150, 70, c.a, c.al, { sw: 2.5 });
-        return { main: m, over: U.both(sl), back: b };
+        return { main: m, over: A.armBoth(sl), back: b };
       } },
 
     { id: 'cake', n: 'フリルドレス', tags: ['princess', 'yume', 'idol'], tb: [160, 350, 280, 290],
@@ -245,6 +246,82 @@
         o += P('M285,366 C291,374 309,374 315,366 L316,380 C308,387 292,387 284,380Z', c.a, c.al, 2) + U.gem(300, 392, 6, '#f2485c', '#b8182e');
         return { main: m, over: o };
       } },
+    { id: 'nurse', n: 'ナースふく', tags: ['doctor', 'casual'], tb: [170, 350, 260, 280],
+      draw(c) {
+        const D = 'M251,375 C266,371 280,371 288,373 C292,386 308,386 312,373 C320,371 334,371 349,375 C358,381 360,394 357,408 C353,426 340,440 338,455 C350,500 366,556 376,606 Q300,626 224,606 C234,556 250,500 262,455 C260,440 247,426 243,408 C240,394 242,381 251,375Z';
+        let m = c.defs + P(D, c.M, c.ml);
+        m += clipG(D, P('M210,592 Q300,614 390,592', 'none', c.s, 8) + P('M300,392 L300,620', 'none', c.ml, 1.6, 'opacity=".35"'));
+        m += [410, 432, 482, 512].map((y) => `<circle cx="300" cy="${y}" r="3.4" fill="${c.s}" stroke="${c.sl}" stroke-width="1.3"/>`).join('');
+        m += belt(c, 457, c.s, c.sl);
+        m += P('M316,414 h28 v20 q0,7 -7,7 h-14 q-7,0 -7,-7Z', c.s, c.sl, 1.6) + U.heart(330, 427, 6.5, c.a) + P('M330,422.5 v8 M326,426.5 h8', 'none', '#fff', 2);
+        m += P('M321,412 l-2,-12 M326,412 l1,-13', 'none', '#7fc8ff', 3) + `<circle cx="319" cy="399" r="2" fill="#7fc8ff"/><circle cx="327" cy="398" r="2" fill="#ffc94a"/>`;
+        let o = sleeve(0.27, 16.5, 16, c.M, c.ml) + cuff(0.2, 0.3, 16.6, c.s, c.sl);
+        o += U.both(P('M300,381 C291,372 277,371 267,377 C266,394 281,404 299,393Z', c.s, c.sl, 2));
+        return { main: m, over: o };
+      } },
+
+    { id: 'maid', n: 'メイドふく', tags: ['sweets', 'princess'], tb: [150, 350, 300, 280],
+      draw(c) {
+        const s1 = skirt(122, 66, { frill: 9, depth: 8 }), s2 = skirt(110, 60, { sag: 6 });
+        let m = c.defs + P(s1, c.s, c.sl) + P(s2, c.M, c.ml);
+        m += clipG(s2, P('M300,470 L300,580 M278,470 L262,576 M322,470 L338,576', 'none', c.ml, 1.6, 'opacity=".3"'));
+        const AP = 'M266,460 C262,498 254,536 248,560' + U.frillLine(248, 560, 352, 560, 6, 8) + ' C346,536 338,498 334,460Z';
+        m += P(AP, c.s, c.sl, 2) + P('M262,548 Q300,556 338,548', 'none', c.a, 2.4, 'opacity=".8"') + U.heart(300, 520, 7, c.a);
+        m += P(BOD_FIT, c.M, c.ml);
+        m += P('M276,410' + U.frillLine(276, 410, 324, 410, 4, -5) + ' L327,458 L273,458Z', c.s, c.sl, 1.8);
+        m += P('M276,412 L266,378 M324,412 L334,378', 'none', c.sl, 7) + P('M276,412 L266,378 M324,412 L334,378', 'none', c.s, 4.5);
+        m += belt(c, 457, c.s, c.sl);
+        let o = puff(c.M, c.ml, c.s) + U.both(P('M300,382 C291,372 277,371 267,377 C268,392 283,401 299,393Z', c.s, c.sl, 2));
+        o += U.bow(300, 392, 30, 18, c.a, c.al, { sw: 1.6 });
+        const b = U.bow(300, 466, 120, 58, c.s, c.sl, { tails: 70, sw: 2.2 });
+        return { main: m, over: o, back: b };
+      } },
+
+    { id: 'starry', n: 'おほしさまドレス', tags: ['space', 'magic', 'princess'], tb: [140, 350, 320, 390],
+      draw(c) {
+        const gid = U.uid('sd');
+        const base = c.m;
+        const S = skirt(250, 96, { bell: 0.8, sag: 9, frill: 10, depth: 6 });
+        let m = `<defs>${U.lin(gid, [[base], [U.dark(base, 0.35)], [U.dark(base, 0.62)]], 0, 380, 0, 720, true)}</defs>`;
+        m += P(S, `url(#${gid})`, U.dark(base, 0.5));
+        const r = U.rng(303); let st = '';
+        for (let i = 0; i < 26; i++) {
+          const x = 190 + r() * 220, y = 480 + r() * 220, k = r();
+          st += k > 0.55 ? U.star(x, y, 3 + r() * 4, '#ffe680', '#ffe680', 1) : U.sparkle(x, y, 3 + r() * 4, '#fff', 0.9);
+        }
+        m += clipG(S, st + P('M196,640 C250,610 350,610 404,640', 'none', '#ffffff', 2, 'opacity=".35" stroke-dasharray="2 8"'));
+        m += P(BOD_CAMI, `url(#${gid})`, U.dark(base, 0.5)) + clipG(BOD_CAMI, U.star(288, 420, 4, '#ffe680', '#ffe680', 1) + U.sparkle(316, 436, 4, '#fff'));
+        m += belt(c, 457, '#ffe680', '#d9a020') + U.star(300, 461, 9, '#fff3a8', '#e0a020', 1.8);
+        const o = U.both(P('M258,377 C243,374 226,386 221,404 C238,407 254,400 262,388Z', U.light(base, 0.55), U.dark(base, 0.3), 1.8, 'fill-opacity=".8"')) +
+          U.sparkle(232, 392, 3.5, '#fff') + U.sparkle(368, 392, 3.5, '#fff');
+        return { main: m, over: o };
+      } },
+
+    { id: 'pumpkin', n: 'かぼちゃドレス', tags: ['halloween', 'magic'], tb: [180, 350, 240, 250],
+      draw(c) {
+        const S = 'M262,455 Q300,461 338,455 C394,468 408,532 376,562 C352,582 248,582 224,562 C192,532 206,468 262,455Z';
+        const pc = U.mix(c.m, '#ff8a2c', 0.72), pl = U.dark(pc, 0.3);
+        let m = c.defs + P(S, pc, pl) + clipG(S, P('M300,462 L300,578 M276,462 C258,500 254,540 262,576 M324,462 C342,500 346,540 338,576 M252,468 C226,500 224,540 236,568 M348,468 C374,500 376,540 364,568', 'none', pl, 2, 'opacity=".55"') +
+          P('M220,552 C250,574 350,574 380,552', 'none', '#3a2456', 8) + `<ellipse cx="270" cy="496" rx="18" ry="9" fill="#fff" opacity=".25"/>`);
+        m += `<g transform="translate(320,516) scale(.55)">` + P('M0,0 C-8,-10 -22,-12 -34,-4 C-28,-2 -26,4 -28,8 C-20,4 -12,6 -8,10 C-6,4 -3,2 0,2 C3,2 6,4 8,10 C12,6 20,4 28,8 C26,4 28,-2 34,-4 C22,-12 8,-10 0,0Z', '#3a2456') + '</g>';
+        m += P(BOD_FIT, c.M, c.ml) + P('M266,452 Q300,462 334,452 L334,462 Q300,472 266,462Z', '#5fae4a', '#3a8030', 1.8) + P('M300,452 q-8,-12 -18,-8 q4,10 18,8Z M300,452 q8,-12 18,-8 q-4,10 -18,8Z', '#7fcf6a', '#3a8030', 1.4);
+        m += [412, 432].map((y) => `<circle cx="300" cy="${y}" r="3.4" fill="${c.a}"/>`).join('');
+        return { main: m, over: puff(c.M, c.ml, '#ff8a2c') + U.both(P('M300,381 C291,372 277,371 267,377 C268,392 283,401 299,393Z', '#3a2456', '#1a0f2a', 2)) + U.bow(300, 390, 26, 15, '#ff8a2c', '#c9601a', { sw: 1.5 }) };
+      } },
+    { id: 'santa', n: 'サンタワンピース', tags: ['xmas', 'winter'], tb: [170, 350, 260, 280],
+      draw(c) {
+        const red = U.mix(c.m, '#e8344a', 0.7), rl = U.dark(red, 0.3);
+        const D = 'M251,375 C266,371 280,371 288,373 C292,386 308,386 312,373 C320,371 334,371 349,375 C358,381 360,394 357,408 C353,426 340,440 338,455 C352,500 368,552 378,600 Q300,620 222,600 C232,552 248,500 262,455 C260,440 247,426 243,408 C240,394 242,381 251,375Z';
+        let m = P(D, red, rl);
+        const fur = (pts) => pts.map((p) => `<circle cx="${f(p[0])}" cy="${f(p[1])}" r="${p[2]}" fill="#ffffff" stroke="#e0e4ee" stroke-width="1.4"/>`).join('');
+        const hem = []; for (let i = 0; i <= 14; i++) { const t = i / 14; hem.push([222 + 156 * t, 600 + Math.sin(t * Math.PI) * 18, 10]); }
+        m += fur(hem) + fur([[300, 396, 7], [300, 420, 7], [300, 444, 7]]);
+        m += P('M262,450 Q300,460 338,450 L338,464 Q300,474 262,464Z', '#2a2438', '#14101e', 1.8) + R(290, 450, 20, 18, '#ffd24a', 'rx="3" stroke="#c9860f" stroke-width="2"') + R(295, 455, 10, 8, '#2a2438', 'rx="1.5"');
+        let o = sleeve(0.86, 16.5, 14.5, red, rl);
+        o += A.armBoth(fur([0.84, 0.88, 0.92].map((t) => { const p = A.armPt(t); return [p[0], p[1], 7]; })));
+        o += fur([[268, 378, 9], [282, 382, 9], [300, 384, 9], [318, 382, 9], [332, 378, 9]]);
+        return { main: m, over: o };
+      } },
   ];
 
   /* ================= トップス ================= */
@@ -312,6 +389,38 @@
         m += U.star(300, 440, 7, c.a, c.al, 1.4);
         return { main: m };
       } },
+    { id: 'jersey', n: 'ジャージ', tags: ['casual', 'school', 'cool'], tb: [190, 340, 220, 170],
+      draw(c) {
+        let m = c.defs + P(BOD_WIDE, c.M, c.ml);
+        m += clipG(BOD_WIDE, `<rect x="230" y="476" width="140" height="20" fill="${U.dark(c.m, 0.1)}" opacity=".5"/>`);
+        m += P('M300,384 L300,490', 'none', c.sl, 4.5) + P('M300,384 L300,490', 'none', c.s, 2.5) + `<rect x="296" y="396" width="8" height="12" rx="3" fill="${c.a}" stroke="${c.al}" stroke-width="1.2"/>`;
+        m += U.star(326, 412, 6, c.s, c.sl, 1.2);
+        let o = sleeve(0.9, 16.5, 14, c.M, c.ml);
+        const p = armP(0.84);
+        o += A.armBoth(P(`M${f(250 - AN[0] * 8)},${f(391 - AN[1] * 8)} L${f(p[0] - AN[0] * 7)},${f(p[1] - AN[1] * 7)}`, 'none', c.s, 3.4) +
+          P(`M${f(250 - AN[0] * 13)},${f(391 - AN[1] * 13)} L${f(p[0] - AN[0] * 11.5)},${f(p[1] - AN[1] * 11.5)}`, 'none', c.s, 2.4));
+        o += cuff(0.84, 0.95, 14.6, U.dark(c.m, 0.1), c.ml);
+        o += P('M282,364 C290,374 310,374 318,364 L319,384 C309,392 291,392 281,384Z', c.M, c.ml, 2) + P('M300,374 L300,390', 'none', c.s, 2.5);
+        return { main: m, over: o };
+      } },
+    { id: 'border', n: 'ボーダーシャツ', tags: ['casual', 'beach', 'school'], tb: [196, 356, 208, 150],
+      draw(c) {
+        let st = '';
+        for (let y = 392; y < 490; y += 17) st += `<rect x="230" y="${y}" width="140" height="8" fill="${c.s}"/>`;
+        let m = c.defs + P(BOD_TEE, c.M, c.ml) + clipG(BOD_TEE, st) + P(BOD_TEE, 'none', c.ml);
+        m += P('M289,373 C293,386 307,386 311,373', 'none', c.ml, 2) + U.heart(322, 414, 5.5, c.a);
+        const o = sleeve(0.27, 16.5, 16, c.M, c.ml) + cuff(0.1, 0.15, 16.4, c.s, c.sl) + cuff(0.22, 0.3, 16.6, c.s, c.sl);
+        return { main: m, over: o };
+      } },
+    { id: 'cape', n: 'ケープブラウス', tags: ['princess', 'school', 'magic'], tb: [196, 350, 208, 150],
+      draw(c) {
+        let m = c.defs + P(BOD_TEE, c.M, c.ml) + [430, 452].map((y) => `<circle cx="300" cy="${y}" r="3" fill="${c.a}"/>`).join('');
+        let o = sleeve(0.27, 16.5, 16, c.M, c.ml);
+        const K = 'M286,369 C270,369 252,373 240,384 C232,396 229,410 231,422' + U.frillLine(231, 422, 369, 422, 8, 7) + ' C371,410 368,396 360,384 C348,373 330,369 314,369 C308,383 292,383 286,369Z';
+        o += P(K, c.s, c.sl) + clipG(K, P('M226,412 C262,426 338,426 374,412', 'none', c.a, 2.5, 'opacity=".7"'));
+        o += P('M285,366 C291,374 309,374 315,366 L316,380 C308,387 292,387 284,380Z', c.s, c.sl, 1.8) + U.bow(300, 392, 34, 20, c.a, c.al, { tails: 22, sw: 1.7 });
+        return { main: m, over: o };
+      } },
   ];
 
   /* ================= ボトムス ================= */
@@ -369,6 +478,35 @@
         o += U.gem(277, 456, 4.5, '#ffd95a', '#d99a18') + U.gem(323, 456, 4.5, '#ffd95a', '#d99a18');
         return { main: m, over: o };
       } },
+    { id: 'denim', n: 'デニムスカート', tags: ['casual', 'cool', 'school'], tb: [200, 440, 200, 150],
+      draw(c) {
+        const den = U.mix(c.m, '#5b7fbf', 0.6), dl = U.dark(den, 0.35);
+        const S = skirt(96, 32, { sag: 4, bell: 0.4 });
+        let m = P(S, den, dl) + clipG(S, P('M300,458 L300,560', 'none', '#ffcf7a', 1.6, 'stroke-dasharray="4 4"') +
+          P('M228,540 Q300,556 372,540', 'none', '#ffcf7a', 1.6, 'stroke-dasharray="4 4"') + P('M262,474 q10,16 26,16 M338,474 q-10,16 -26,16', 'none', dl, 1.6, 'opacity=".6"') +
+          P('M318,500 h22 v18 l-11,6 l-11,-6Z', U.light(den, 0.12), dl, 1.4) + U.heart(329, 509, 5, c.a) +
+          P('M222,552 Q300,570 378,552', 'none', U.light(den, 0.4), 3, 'stroke-dasharray="2 3"'));
+        m += belt(c, 457, den, dl) + [466, 486, 506].map((y) => `<circle cx="300" cy="${y}" r="3" fill="#ffd24a" stroke="#c9860f" stroke-width="1"/>`).join('');
+        return { main: m };
+      } },
+    { id: 'harem', n: 'サルエルパンツ', tags: ['casual', 'cool'], tb: [200, 440, 200, 320],
+      draw(c) {
+        const S = `M262,452 L338,452 C354,494 372,572 366,${ANK - 30} C362,${ANK - 14} 342,${ANK - 10} 332,${ANK - 13} L318,${ANK - 13} C314,610 308,566 300,540 C292,566 286,610 282,${ANK - 13} L268,${ANK - 13} C258,${ANK - 10} 238,${ANK - 14} 234,${ANK - 30} C228,572 246,494 262,452Z`;
+        let m = c.defs + P(S, c.M, c.ml);
+        m += clipG(S, P('M252,520 q12,30 6,70 M348,520 q-12,30 -6,70 M276,560 q4,40 -4,90 M324,560 q-4,40 4,90', 'none', c.ml, 1.6, 'opacity=".35"'));
+        m += U.both(`<rect x="264" y="${ANK - 18}" width="30" height="11" rx="5.5" fill="${c.s}" stroke="${c.sl}" stroke-width="2"/>`);
+        m += belt(c, 457, c.s, c.sl) + P('M292,463 q8,10 16,0', 'none', c.a, 2.4);
+        return { main: m };
+      } },
+    { id: 'balloon', n: 'バルーンスカート', tags: ['yume', 'idol', 'sweets'], tb: [200, 440, 200, 150],
+      draw(c) {
+        const S = 'M264,455 Q300,461 336,455 C384,470 398,522 372,550 C350,570 250,570 228,550 C202,522 216,470 264,455Z';
+        let m = c.defs + P(S, c.M, c.ml);
+        m += clipG(S, P('M276,462 C262,500 260,530 266,566 M300,462 L300,568 M324,462 C338,500 340,530 334,566 M256,466 C236,500 234,530 242,560 M344,466 C364,500 366,530 358,560', 'none', c.ml, 1.6, 'opacity=".3"') +
+          P('M222,544 C250,566 350,566 378,544', 'none', c.s, 7) + `<ellipse cx="270" cy="490" rx="16" ry="8" fill="#fff" opacity=".35"/>`);
+        m += belt(c, 457, c.a, c.al) + U.bow(300, 459, 30, 18, c.a, c.al, { sw: 1.6 });
+        return { main: m };
+      } },
   ];
 
   /* ================= くつした ================= */
@@ -415,6 +553,12 @@
       draw(c) {
         const d = [676, 690, 704, 718].map((y) => P(`M240,${y} Q276,${y + 7} 300,${y} Q324,${y + 7} 360,${y}`, 'none', c.ml, 1.6, 'opacity=".45"')).join('');
         return c.defs + sockBase(660, ANK - 4, c, c.M, c.ml, d, 5.5) + sockTop(658, c.s, c.sl, 8);
+      } },
+    { id: 'heart', n: 'ハートがらソックス', tags: ['yume', 'idol', 'casual'], tb: [236, 620, 128, 166],
+      draw(c) {
+        const y = 646;
+        const d = [[270, 676], [284, 700], [272, 724], [330, 676], [316, 700], [328, 724]].map((p) => U.heart(p[0], p[1], 4.6, c.a)).join('');
+        return c.defs + sockBase(y, 0, c, c.M, c.ml, d) + sockTop(y, c.s, c.sl);
       } },
   ];
 
@@ -473,7 +617,26 @@
           P('M276,749 L260,763 M276,749 L292,763', 'none', c.al, 7) + P('M276,749 L260,763 M276,749 L292,763', 'none', c.a, 4);
         return c.defs + U.both(one);
       } },
+    { id: 'bunny', n: 'うさぎスリッパ', tags: ['yume', 'winter'], tb: [232, 700, 136, 92],
+      draw(c) {
+        const one = `<g transform="rotate(-14 266 742)"><ellipse cx="266" cy="738" rx="6" ry="15" fill="${c.M}" stroke="${c.ml}" stroke-width="2"/><ellipse cx="266" cy="740" rx="2.6" ry="10" fill="#ffc2d8"/></g>` +
+          `<g transform="rotate(14 286 742)"><ellipse cx="286" cy="738" rx="6" ry="15" fill="${c.M}" stroke="${c.ml}" stroke-width="2"/><ellipse cx="286" cy="740" rx="2.6" ry="10" fill="#ffc2d8"/></g>` +
+          P(A.fluffy(276, 763, 18, 10), c.M, c.ml, 2) + `<circle cx="269" cy="760" r="2.4" fill="#3b2430"/><circle cx="283" cy="760" r="2.4" fill="#3b2430"/>` +
+          P('M273.5,765 h5 l-2.5,2.6Z', '#ff8fb0') + `<ellipse cx="265" cy="767" rx="3.6" ry="2" fill="#ff9cb8" opacity=".7"/><ellipse cx="287" cy="767" rx="3.6" ry="2" fill="#ff9cb8" opacity=".7"/>`;
+        return c.defs + U.both(one);
+      } },
+    { id: 'rain', n: 'ながぐつ', tags: ['casual', 'school', 'winter'], tb: [232, 650, 136, 142],
+      draw(c) {
+        const B = 'M257,674 L297,674 L296,738 C298,746 300,752 300,758 C300,770 290,776 276,776 C262,776 252,770 252,758 C252,752 254,746 256,738Z';
+        const one = P(B, c.M, c.ml) + clipG(B, [[266, 700], [286, 716], [268, 734], [288, 690], [262, 756]].map((p) => `<circle cx="${p[0]}" cy="${p[1]}" r="4.2" fill="${c.s}" opacity=".9"/>`).join('')) +
+          P('M253,670 h48 a5,5 0 0 1 0,11 h-48 a5,5 0 0 1 0,-11Z', c.a, c.al, 2) + P('M254,768 Q276,782 298,768', 'none', U.dark(c.m, 0.3), 3) +
+          P('M262,688 q-2,30 0,52', 'none', '#fff', 3.4, 'opacity=".55"');
+        return c.defs + U.both(one);
+      } },
   ];
+
+  /* ついかアイテム（art-plus.js）で つかう どうぐ */
+  A._wk = { C, sleeve, cuff, puff, R, clipG, skirt, tier, belt, BOD_TEE, BOD_FIT, BOD_CAMI, BOD_WIDE, sparkles, legAt, sockBase, sockTop, SHOE, shine, armP, AD, AN };
 
   /* ================= くみあわせ ================= */
   A.wearParts = function (st) {

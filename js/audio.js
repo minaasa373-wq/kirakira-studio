@@ -60,6 +60,11 @@
       case 'star': { const f = 784 * Math.pow(2, (arg || 0) * 2 / 12); tone(f, t, 0.2, 'triangle', 0.2); tone(f * 2, t + 0.06, 0.3, 'sine', 0.09); break; }
       case 'stamp': tone(300, t, 0.09, 'sine', 0.3, null, 160); tone(1319, t + 0.03, 0.14, 'sine', 0.1); break;
       case 'save': ['G5', 'C6', 'E6', 'G6'].forEach((n, i) => tone(fq(n), t + i * 0.07, 0.25, 'sine', 0.16)); break;
+      case 'drum': for (let i = 0; i < 26; i++) noise(t + i * 0.042, 0.05, 0.05 + i * 0.006, 1800, 900, 0.9); noise(t + 1.12, 0.6, 0.3, 5000, 2500, 0.5); tone(98, t + 1.1, 0.4, 'sine', 0.35, null, 60); break;
+      case 'applause': for (let i = 0; i < 90; i++) { const d = Math.random() * 2.8; noise(t + d, 0.03 + Math.random() * 0.03, (0.06 + Math.random() * 0.12) * (1 - d / 3.4), 1400 + Math.random() * 1600, null, 1.4); } break;
+      case 'spot': tone(220, t, 0.25, 'sine', 0.2, null, 880); noise(t, 0.3, 0.08, 600, 4000, 0.7); break;
+      case 'melody': ['E6', 'G6', 'C7', 'G6', 'E6', 'C6', 'D6', 'G6'].forEach((n, i) => { tone(fq(n), t + i * 0.17, 0.5, 'sine', 0.16); tone(fq(n) * 2.005, t + i * 0.17, 0.4, 'sine', 0.04); }); break;
+      case 'don': tone(150, t, 0.22, 'sine', 0.42, null, 70); noise(t, 0.07, 0.14, 900, 300, 0.8); break;
       case 'open': tone(523, t, 0.1, 'triangle', 0.15); tone(784, t + 0.07, 0.1, 'triangle', 0.15); tone(1047, t + 0.14, 0.18, 'triangle', 0.15); break;
     }
   };
@@ -89,21 +94,69 @@
       nextT += STEP; step++;
     }
   }
+  /* BGM：audio/bgm.mp3 を ちいさめの おとで くりかえし ながす */
+  const BGM_VOL = 0.22;
+  let bgmEl = null, fadeT = null;
+  function fadeTo(v, ms, done) {
+    clearInterval(fadeT);
+    const from = bgmEl.volume, t0 = performance.now();
+    fadeT = setInterval(() => {
+      const k = Math.min(1, (performance.now() - t0) / ms);
+      bgmEl.volume = Math.max(0, Math.min(1, from + (v - from) * k));
+      if (k >= 1) { clearInterval(fadeT); if (done) done(); }
+    }, 40);
+  }
+  let bgmMuted = false;
   S.startBgm = function () {
-    if (!S.on.bgm || timer) return;
-    const c = ctx(); if (!c) return;
-    bgmG.gain.cancelScheduledValues(c.currentTime); bgmG.gain.setTargetAtTime(0.045, c.currentTime, 0.4);
-    nextT = c.currentTime + 0.1; schedule(); timer = setInterval(schedule, 200);
+    if (!S.on.bgm || bgmMuted) return;
+    if (!bgmEl) { bgmEl = new Audio('audio/bgm.mp3'); bgmEl.loop = true; bgmEl.preload = 'auto'; bgmEl.volume = 0; }
+    const pr = bgmEl.play();
+    if (pr && pr.catch) pr.catch(() => { /* まだ タッチされていない ときは あとで ならす */ });
+    fadeTo(BGM_VOL, 800);
   };
   S.stopBgm = function () {
-    if (timer) { clearInterval(timer); timer = null; }
-    if (S.ctx) bgmG.gain.setTargetAtTime(0.0001, S.ctx.currentTime, 0.15);
+    if (!bgmEl) return;
+    fadeTo(0, 300, () => bgmEl.pause());
   };
   S.setBgm = (v) => { S.on.bgm = v; if (v) S.startBgm(); else S.stopBgm(); };
+  /* ショーの あいだだけ BGM を とめる（せっていは かえない） */
+  S.muteBgm = (v) => {
+    if (bgmMuted === !!v) return;
+    bgmMuted = !!v;
+    if (bgmMuted) S.stopBgm(); else if (S.on.bgm && bgmEl) S.startBgm();
+  };
+
+  /* ---------- ファイルの こうかおん（ショー用） ---------- */
+  const FILES = { drumroll: 'audio/drumroll.mp3', jajan: 'audio/jajan.mp3', cheer: 'audio/cheer.mp3' };
+  const cache = {}, playing = new Set();
+  S.preloadFiles = () => { Object.keys(FILES).forEach((k) => { if (!cache[k]) { const a = new Audio(FILES[k]); a.preload = 'auto'; cache[k] = a; } }); };
+  /* ならせた ときは audio を かえす（こうかおん OFF・しっぱい のときは null） */
+  S.playFile = function (name, vol) {
+    if (!S.on.se || !FILES[name]) return null;
+    S.preloadFiles();
+    const a = cache[name];
+    try { a.pause(); a.currentTime = 0; } catch (e) { /* */ }
+    a.volume = vol == null ? 0.9 : vol;
+    playing.add(a);
+    a.onended = null;
+    const pr = a.play();
+    if (pr && pr.catch) pr.catch(() => { playing.delete(a); if (a.__fail) a.__fail(); });
+    return a;
+  };
+  S.stopFiles = function (fadeMs) {
+    playing.forEach((a) => {
+      a.onended = null; a.__fail = null;
+      if (!fadeMs) { a.pause(); return; }
+      const v0 = a.volume, t0 = performance.now();
+      const tm = setInterval(() => { const k = Math.min(1, (performance.now() - t0) / fadeMs); a.volume = Math.max(0, v0 * (1 - k)); if (k >= 1) { clearInterval(tm); a.pause(); } }, 40);
+    });
+    playing.clear();
+  };
   S.setSe = (v) => { S.on.se = v; };
   /* さいしょの タッチで おとを ならせるようにする */
   S.unlock = () => { ctx(); if (S.on.bgm) S.startBgm(); };
-  document.addEventListener('visibilitychange', () => { if (document.hidden) S.stopBgm(); else if (S.on.bgm && S.ctx) S.startBgm(); });
+  void schedule; /* むかしの オルゴールBGM（いまは つかわない） */
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { S.stopBgm(); S.stopFiles(); } else if (S.on.bgm && bgmEl) S.startBgm(); });
 
   g.Sound = S;
 })(window);

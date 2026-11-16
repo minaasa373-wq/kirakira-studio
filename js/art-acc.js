@@ -6,6 +6,9 @@
   const GOLD = '#ffd24a', GOLDL = '#c9860f';
   const goldDefs = (id) => `<defs>${U.lin(id, [['#fff3b0'], ['#ffd24a'], ['#f2a41e']])}</defs>`;
   const two = (d, cOut, wOut, cIn, wIn) => P(d, 'none', cOut, wOut) + P(d, 'none', cIn, wIn);
+  const R = (x, y, w, h, fill, ex) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}"${ex ? ' ' + ex : ''}/>`;
+  const El = (x, y, rx, ry, fill, ex) => `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(rx)}" ry="${f(ry)}" fill="${fill}"${ex ? ' ' + ex : ''}/>`;
+  const clipG = (d, inner) => { const id = U.uid('ca'); return `<defs><clipPath id="${id}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${id})">${inner}</g>`; };
   const fluffy = (cx, cy, r, n) => {
     let d = '', prev = null;
     for (let i = 0; i <= n; i++) {
@@ -109,6 +112,56 @@
         k = k || { c: '#FDD9C0', line: '#c08a80', shade: '#f0b0a8' };
         return { front: U.both(P('M203,250 C178,247 152,236 128,212 C135,250 158,280 201,292Z', k.c, k.line, 2.5) + P('M190,262 C172,258 158,250 146,238', 'none', k.shade, 2.5)) };
       } },
+    { id: 'frog', n: 'かえるのぼうし', tags: ['casual', 'yume'], tb: [170, 20, 260, 150],
+      draw() {
+        const g = '#8fd88a', gl = '#4fa85a';
+        let s = U.union([ell(250, 66, 24, 22), ell(350, 66, 24, 22), 'M190,150 C180,86 240,58 300,58 C360,58 420,86 410,150 C380,138 220,138 190,150Z'], g, gl);
+        s += `<circle cx="250" cy="66" r="13" fill="#fff"/><circle cx="350" cy="66" r="13" fill="#fff"/><circle cx="253" cy="68" r="6.5" fill="#3b2430"/><circle cx="347" cy="68" r="6.5" fill="#3b2430"/>` +
+          `<circle cx="255" cy="65" r="2.2" fill="#fff"/><circle cx="349" cy="65" r="2.2" fill="#fff"/>`;
+        s += P('M188,150 C220,134 380,134 412,150 L410,132 C380,118 220,118 190,132Z', '#6cc06a', gl, 2.2) + P('M200,140 v-10 M216,136 v-11 M232,133 v-11 M248,131 v-11 M264,130 v-11 M280,129 v-11 M296,129 v-11 M312,129 v-11 M328,130 v-11 M344,131 v-11 M360,133 v-11 M376,136 v-11 M392,140 v-10', 'none', gl, 1.3, 'opacity=".5"');
+        s += P('M276,100 Q300,116 324,100', 'none', gl, 3) + `<ellipse cx="258" cy="104" rx="8" ry="4.5" fill="#ff9cb8" opacity=".8"/><ellipse cx="342" cy="104" rx="8" ry="4.5" fill="#ff9cb8" opacity=".8"/>`;
+        return { front: s };
+      } },
+    { id: 'clip', n: 'ヘアクリップ', tags: ['idol', 'casual', 'school'], tb: [190, 140, 120, 110],
+      draw(c) {
+        return { front: `<g transform="rotate(-30 236 178)">` + P('M214,178 h44', 'none', '#c9cfe0', 4) + U.heart(236, 180, 11, c.m, c.ml, 2) + `<circle cx="231" cy="174" r="2.6" fill="#fff" opacity=".8"/></g>` +
+          `<g transform="rotate(-24 262 198)">` + P('M246,200 h32', 'none', '#c9cfe0', 3.6) + U.star(262, 200, 10, GOLD, '#e0a020', 2) + '</g>' + U.sparkle(214, 160, 4, '#fff', 0.9) };
+      } },
+    { id: 'chef', n: 'シェフぼうし', tags: ['sweets'], tb: [180, 20, 240, 150],
+      draw() {
+        const w = '#ffffff', l = '#d3c9dc';
+        let s = U.union([ell(244, 84, 32, 29), ell(300, 64, 37, 33), ell(356, 84, 32, 29), ell(272, 98, 30, 26), ell(328, 98, 30, 26)], w, l);
+        s += P('M268,74 q7,16 2,32 M332,74 q-7,16 -2,32 M300,54 q4,24 0,48', 'none', l, 1.8);
+        s += P('M206,144 C246,126 354,126 394,144 L392,106 C352,92 248,92 208,106Z', w, l, 2.4) + P('M210,126 C250,112 350,112 390,126', 'none', '#ff9ec6', 4);
+        return { front: s };
+      } },
+    { id: 'nursecap', n: 'ナースキャップ', tags: ['doctor'], tb: [220, 70, 160, 100],
+      draw(c) {
+        return { front: P('M244,124 Q300,100 356,124 L348,152 Q300,140 252,152Z', '#ffffff', '#d3c9dc', 2.4) + P('M250,142 Q300,130 350,142', 'none', c.m, 4) +
+          U.heart(300, 124, 8, c.a, c.al, 1.4) + P('M300,120 v8 M296,124 h8', 'none', '#fff', 1.8) };
+      } },
+    { id: 'pumpkinhat', n: 'かぼちゃのぼうし', tags: ['halloween'], tb: [290, 40, 140, 120],
+      draw() {
+        return { front: `<g transform="rotate(14 356 112)">` + El(356, 112, 40, 30, '#ff8a2c', 'stroke="#c9601a" stroke-width="2.5"') + P('M342,84 Q336,112 342,140 M370,84 Q376,112 370,140', 'none', '#c9601a', 2) +
+          P('M354,84 q2,-16 12,-18', 'none', '#4f8a3a', 6) + P('M360,78 q14,-10 22,0 q-10,8 -22,0Z', '#7fcf6a', '#3a8030', 1.4) +
+          P('M338,108 l7,-8 l7,8Z M360,108 l7,-8 l7,8Z', '#3a2456') + P('M340,120 q16,12 32,0', 'none', '#3a2456', 3) + '</g>' + U.sparkle(404, 82, 5, '#fff7c2') };
+      } },
+    { id: 'santahat', n: 'サンタぼうし', tags: ['xmas', 'winter'], tb: [180, 10, 300, 170],
+      draw(c) {
+        const red = U.mix(c.m, '#e8344a', 0.7);
+        let s = P('M206,140 C214,70 268,34 330,44 C380,52 420,86 440,150 C424,138 410,128 392,124 C360,118 248,118 206,140Z', red, U.dark(red, 0.3));
+        s += P('M300,50 C340,52 380,70 404,104', 'none', '#fff', 4, 'opacity=".3"');
+        let fur = ''; for (let i = 0; i <= 12; i++) { const t = i / 12; fur += `<circle cx="${f(198 + 206 * t)}" cy="${f(150 - Math.sin(t * Math.PI) * 26)}" r="13" fill="#fff" stroke="#e0e4ee" stroke-width="1.4"/>`; }
+        s += fur + U.union([A.fluffy(444, 158, 15, 9)], '#ffffff', '#e0e4ee', 1.4);
+        return { front: s };
+      } },
+    { id: 'antler', n: 'トナカイのつの', tags: ['xmas'], tb: [170, 20, 260, 160],
+      draw() {
+        const a = '#a8744a', al = '#6a4424';
+        const one = P('M232,124 C222,92 214,70 204,48 M218,86 C204,82 194,72 188,60 M212,68 C220,58 224,48 224,36', 'none', al, 11) + P('M232,124 C222,92 214,70 204,48 M218,86 C204,82 194,72 188,60 M212,68 C220,58 224,48 224,36', 'none', a, 7);
+        return { front: two('M200,158 Q300,82 400,158', '#b8182e', 10, '#e8344a', 6.5) + U.both(one) + `<circle cx="252" cy="112" r="6" fill="#e8344a"/><circle cx="262" cy="106" r="6" fill="#e8344a"/>` +
+          P('M240,106 q-8,-10 -18,-6 q4,10 18,6Z M270,100 q6,-12 18,-10 q-2,12 -18,10Z', '#4fae62', '#2f8040', 1.2) };
+      } },
   ];
 
   /* ================= めがね ================= */
@@ -136,6 +189,15 @@
         return temples(c) + P('M283,256 Q300,250 317,256', 'none', c, 4) + U.both(P('M216,249 L283,249 Q288,250 287,258 C284,284 270,293 252,293 C232,293 219,284 214,258 Q213,250 216,249Z', '#4a4468', c, 3, 'fill-opacity=".86"') +
           P('M226,258 l12,-5 M232,266 l18,-8', 'none', '#fff', 3, 'opacity=".55"'));
       } },
+    { id: 'party', n: 'パーティーめがね', tags: ['idol', 'yume', 'sweets'], tb: [180, 210, 240, 110],
+      draw() {
+        const c = '#ff6fa8';
+        const ring = (x) => `<circle cx="${x}" cy="267" r="30" fill="#ffffff" fill-opacity=".12" stroke="${c}" stroke-width="8"/>` +
+          `<circle cx="${x}" cy="267" r="30" fill="none" stroke="#ffe27a" stroke-width="3.4" stroke-dasharray="2 9" stroke-linecap="round"/>`;
+        return temples(c) + P('M280,262 Q300,252 320,262', 'none', c, 5) + ring(250) + ring(350) +
+          U.star(214, 236, 11, '#ffe27a', '#e0a020', 2) + U.star(386, 236, 11, '#ffe27a', '#e0a020', 2) +
+          U.heart(300, 250, 6, '#7fd0ff', '#3a8fe8', 1.2) + U.sparkle(230, 250, 4, '#fff') + U.sparkle(330, 250, 4, '#fff');
+      } },
   ];
 
   /* ================= みみ（イヤリング） ================= */
@@ -148,6 +210,9 @@
     { id: 'hoop', n: 'わっか', tags: ['cool', 'beach'], tb: [168, 262, 60, 60], draw: () => U.both(`<circle cx="198" cy="298" r="9.5" fill="none" stroke="${GOLDL}" stroke-width="4.6"/><circle cx="198" cy="298" r="9.5" fill="none" stroke="${GOLD}" stroke-width="2.6"/>`) },
     { id: 'flower', n: 'おはな', tags: ['fairy', 'beach', 'matsuri'], tb: [168, 262, 60, 60], draw: () => U.both(U.flower(198, 293, 9, '#ffffff', GOLD, 5, '#f0a0c0')) },
     { id: 'drop', n: 'しずく', tags: ['princess', 'fairy', 'winter'], tb: [168, 262, 60, 60], draw: () => U.both(P('M198,286 v5', 'none', GOLDL, 1.8) + P('M198,291 C192,300 191,308 198,309 C205,308 204,300 198,291Z', '#7fd4ff', '#3a8fe8', 1.5) + `<circle cx="196" cy="302" r="1.6" fill="#fff"/>`) },
+    { id: 'strawberry', n: 'いちご', tags: ['sweets', 'yume'], tb: [168, 262, 60, 70],
+      draw: () => U.both(P('M198,286 v6', 'none', GOLDL, 1.8) + P('M190,298 C190,294 194,292 198,292 C202,292 206,294 206,298 C206,306 201,312 198,314 C195,312 190,306 190,298Z', '#f2485c', '#b8182e', 1.4) +
+        P('M192,294 l3,-4 l3,3 l3,-3 l3,4Z', '#5fbf6a', '#3a9048', 1) + [[195, 299], [201, 299], [198, 305], [194, 305], [202, 305]].map((p) => `<circle cx="${p[0]}" cy="${p[1]}" r=".9" fill="#ffe680"/>`).join('')) },
   ];
 
   /* ================= くび ================= */
@@ -172,6 +237,13 @@
       draw: () => P('M281,370 Q300,402 319,370', 'none', '#e0a020', 1.8) + U.star(300, 394, 10, GOLD, '#e0a020', 1.8) + U.gem(300, 395, 3.4, '#b184f5') + U.sparkle(313, 384, 3.5, '#fff', 0.9) },
     { id: 'lei', n: 'はなのレイ', tags: ['beach', 'fairy'], tb: [240, 345, 120, 90],
       draw: () => neckArc(7, 268, 436, (x, y, i) => U.flower(x, y, 9.5, ['#ff8fb8', '#fff3a8', '#ffffff', '#ffb25e'][i % 4], i % 4 === 1 ? '#ffb347' : '#ffe27a', 5, '#e89ab8')) },
+    { id: 'clover', n: 'クローバー', tags: ['fairy', 'casual'], tb: [250, 345, 100, 70],
+      draw: () => P('M281,370 Q300,402 319,370', 'none', '#e0a020', 1.8) + [0, 90, 180, 270].map((a) => U.heart(0, 0, 5.6, '#5fcf7a', '#2f9a52', 1.2).replace('<path', `<path transform="translate(300,397) rotate(${a + 45}) translate(0,-6)"`)).join('') +
+        `<circle cx="300" cy="397" r="2.4" fill="#ffe680"/>` + U.sparkle(312, 386, 3, '#fff', 0.9) },
+    { id: 'stetho', n: 'ちょうしんき', tags: ['doctor'], tb: [240, 340, 120, 140],
+      draw: () => P('M278,368 C266,396 270,430 288,446 M322,368 C334,396 330,430 316,446', 'none', '#5a6ca8', 4.5) + P('M288,446 Q300,460 312,452 L318,470', 'none', '#5a6ca8', 4.5) +
+        `<circle cx="320" cy="478" r="9" fill="#d8dce8" stroke="#8a90a8" stroke-width="2.5"/><circle cx="320" cy="478" r="4" fill="#ffffff"/>` +
+        `<circle cx="278" cy="366" r="3" fill="#ff9ec6"/><circle cx="322" cy="366" r="3" fill="#ff9ec6"/>` },
   ];
 
   /* ================= て ================= */
@@ -224,6 +296,56 @@
         return two('M372,650 L462,330', '#8a5a2c', 10, '#c98b4d', 6) + P(H, 'none', '#c9860f', 9) + P(H, 'none', GOLD, 5.5) +
           U.gem(464, 296, 10, '#f2485c', '#b8182e') + U.sparkle(494, 258, 7, '#fff7c2') + U.sparkle(440, 250, 5, '#fff7c2') + fingers(399, 548, k);
       } },
+    { id: 'candy', n: 'にじいろキャンディ', tags: ['sweets', 'yume', 'matsuri'], tb: [360, 340, 150, 230],
+      draw(k) {
+        let s = two('M394,566 L430,440', '#d9c0cc', 7, '#ffffff', 4.5);
+        const cols = ['#ff7fa8', '#ffb86b', '#ffe680', '#8fe6a8', '#8fc8ff', '#c79cff'];
+        s += `<circle cx="438" cy="410" r="38" fill="#fff" stroke="#e0b0c6" stroke-width="3"/>`;
+        cols.forEach((c, i) => {
+          const r = 34 - i * 5.4;
+          s += `<circle cx="438" cy="410" r="${r}" fill="none" stroke="${c}" stroke-width="5" stroke-dasharray="${f(r * 3.4)} ${f(r * 0.6)}" transform="rotate(${i * 50} 438 410)"/>`;
+        });
+        s += `<circle cx="438" cy="410" r="4" fill="#fff"/>` + P('M414,388 q10,-10 24,-10', 'none', '#fff', 5, 'opacity=".7"') + U.bow(430, 448, 26, 15, '#ff7fb0', '#d9508a', { sw: 1.4 });
+        return s + fingers(396, 548, k);
+      } },
+    { id: 'umbrella', n: 'かさ', tags: ['casual', 'school'], tb: [320, 150, 250, 420],
+      draw(k) {
+        const cx = 452, cy = 268;
+        let s = two(`M396,560 L${cx},${cy - 6}`, '#8a5a6a', 6, '#d9a0b8', 3.4) + P('M396,560 q-6,14 4,18 q8,2 8,-6', 'none', '#d9508a', 5);
+        const D = `M${cx - 118},${cy + 34} Q${cx - 104},${cy - 70} ${cx},${cy - 84} Q${cx + 104},${cy - 70} ${cx + 118},${cy + 34}` +
+          ` Q${cx + 89},${cy + 18} ${cx + 59},${cy + 34} Q${cx + 30},${cy + 18} ${cx},${cy + 34} Q${cx - 30},${cy + 18} ${cx - 59},${cy + 34} Q${cx - 89},${cy + 18} ${cx - 118},${cy + 34}Z`;
+        s += P(D, '#ff9ec6', '#d9508a', 2.6);
+        s += clipG(D, [[-80, -10], [-30, -50], [20, -30], [70, -20], [-50, 20], [40, 14], [0, -70], [90, 20]].map((p) => `<circle cx="${cx + p[0]}" cy="${cy + p[1]}" r="9" fill="#fff" opacity=".9"/>`).join('') +
+          P(`M${cx},${cy - 84} Q${cx - 30},${cy - 30} ${cx - 59},${cy + 30} M${cx},${cy - 84} Q${cx + 30},${cy - 30} ${cx + 59},${cy + 30} M${cx},${cy - 84} L${cx},${cy + 30}`, 'none', '#d9508a', 1.8, 'opacity=".5"'));
+        s += P(`M${cx},${cy - 84} v-14`, 'none', '#d9508a', 4) + `<circle cx="${cx}" cy="${cy - 100}" r="4" fill="#ffe27a" stroke="#c9860f" stroke-width="1.4"/>`;
+        return s + fingers(396, 548, k);
+      } },
+    { id: 'can', n: 'じょうろ', tags: ['fairy', 'casual'], tb: [360, 460, 170, 150],
+      draw(k) {
+        const c = '#7fd0f0', l = '#3a9cc8';
+        let s = P('M420,560 L470,520 L478,528 L428,570Z', c, l, 2) + `<ellipse cx="474" cy="523" rx="6" ry="10" transform="rotate(-38 474 523)" fill="${c}" stroke="${l}" stroke-width="2"/>`;
+        s += P('M388,546 C386,520 448,520 450,546 L446,590 C444,604 394,604 392,590Z', c, l, 2.4) + P('M392,550 C400,560 438,560 446,550', 'none', '#fff', 2.5, 'opacity=".6"');
+        s += P('M396,536 C384,506 456,506 444,536', 'none', l, 5) + P('M396,536 C384,506 456,506 444,536', 'none', c, 2.4);
+        s += U.flower(419, 572, 9, '#ffffff', '#ffd24a', 5, '#f0a0c0');
+        s += [[488, 540], [494, 556], [484, 562], [500, 548]].map((p) => P(`M${p[0]},${p[1] - 5} C${p[0] + 3},${p[1]} ${p[0] + 3},${p[1] + 3} ${p[0]},${p[1] + 3} C${p[0] - 3},${p[1] + 3} ${p[0] - 3},${p[1]} ${p[0]},${p[1] - 5}Z`, '#bfe9ff', '#5fb8e8', 1)).join('');
+        return s + fingers(396, 548, k);
+      } },
+    { id: 'candycane', n: 'キャンディケーン', tags: ['xmas'], tb: [360, 400, 120, 180],
+      draw(k) {
+        const d = 'M398,566 L424,440 C428,420 448,414 458,428 C464,436 462,446 456,452';
+        return P(d, 'none', '#d9c0cc', 13) + P(d, 'none', '#ffffff', 10) + P(d, 'none', '#f2485c', 10, 'stroke-dasharray="9 9" stroke-linecap="butt"') + U.bow(422, 470, 26, 15, '#4fae62', '#2f8040', { sw: 1.4 }) + fingers(397, 548, k);
+      } },
+    { id: 'lantern', n: 'かぼちゃのバケツ', tags: ['halloween'], tb: [350, 470, 130, 130],
+      draw(k) {
+        return P('M380,560 C380,530 440,530 440,560', 'none', '#3a2456', 4) + El(410, 580, 32, 26, '#ff8a2c', 'stroke="#c9601a" stroke-width="2.5"') + P('M398,556 Q394,580 398,604 M422,556 Q426,580 422,604', 'none', '#c9601a', 2) +
+          P('M394,576 l6,-7 l6,7Z M414,576 l6,-7 l6,7Z', '#3a2456') + P('M396,588 q14,10 28,0', 'none', '#3a2456', 3) +
+          [[396, 552, '#ff7fb2'], [412, 548, '#8de8cc'], [426, 553, '#ffe680']].map((p) => El(p[0], p[1], 7, 5, p[2], `stroke="${U.dark(p[2], 0.3)}" stroke-width="1"`)).join('') + fingers(400, 546, k);
+      } },
+    { id: 'present', n: 'プレゼント', tags: ['xmas'], tb: [350, 490, 140, 120],
+      draw(k) {
+        return R(380, 548, 64, 50, '#c4a7ff', 'stroke="#8a5cf0" stroke-width="2.4" rx="4"') + R(406, 548, 12, 50, '#ffe680') + R(380, 567, 64, 12, '#ffe680') + U.bow(412, 544, 40, 22, '#ff7fb2', '#d9508a', { sw: 1.6 }) +
+          U.sparkle(452, 538, 6, '#fff7c2') + fingers(394, 556, k);
+      } },
   ];
 
   /* ================= せなか ================= */
@@ -270,6 +392,32 @@
         const w = P('M286,410 C250,360 198,338 146,348 C164,366 166,380 158,394 C178,390 190,398 192,412 C208,404 224,410 230,426 C246,416 264,418 286,430Z', '#6a5a98', '#3a2e5a', 2.4) +
           P('M282,414 C240,380 196,360 156,354 M282,420 C250,402 222,398 196,404', 'none', '#3a2e5a', 1.8, 'opacity=".6"');
         return { back: U.both(w) };
+      } },
+    { id: 'randsel', n: 'ランドセル', tags: ['school'], tb: [200, 340, 200, 220],
+      draw() {
+        const c = '#f2485c', l = '#b8182e';
+        const back = P('M226,382 Q226,364 244,364 L356,364 Q374,364 374,382 L374,520 Q374,534 360,534 L240,534 Q226,534 226,520Z', c, l, 2.5) +
+          P('M226,446 L374,446', 'none', l, 2, 'opacity=".5"');
+        const strap = U.both(P('M262,376 C254,404 252,440 256,470', 'none', l, 10) + P('M262,376 C254,404 252,440 256,470', 'none', c, 6.5) + `<rect x="250" y="430" width="12" height="9" rx="2" fill="#ffd24a" stroke="#c9860f" stroke-width="1.4"/>`);
+        return { back, front: strap };
+      } },
+    { id: 'dragon', n: 'ドラゴンのはね', tags: ['cool', 'magic'], tb: [70, 280, 460, 220],
+      draw() {
+        const id = U.uid('dw');
+        const w = P('M286,412 C260,350 196,300 120,296 C134,316 136,330 128,342 C150,346 160,358 158,374 C176,376 188,388 188,404 C206,402 220,412 222,428 C240,420 260,424 286,432Z', `url(#${id})`, '#3a7a68', 2.6) +
+          P('M282,416 L130,302 M282,420 L162,360 M282,426 L196,402', 'none', '#3a7a68', 2.2) + P('M120,296 l-12,-14 l18,4Z', '#3a7a68');
+        return { back: `<defs>${U.lin(id, [['#c8f0d8'], ['#6fcfa8'], ['#4fa8a0']], 1, 0, 0, 1)}</defs>` + U.both(w) };
+      } },
+    { id: 'bearpack', n: 'くまリュック', tags: ['casual', 'school'], tb: [230, 340, 210, 200],
+      draw() {
+        const c = '#d09a68', l = '#8a5a36';
+        const back = `<circle cx="358" cy="404" r="13" fill="${c}" stroke="${l}" stroke-width="2.5"/><circle cx="410" cy="404" r="13" fill="${c}" stroke="${l}" stroke-width="2.5"/>` +
+          `<circle cx="358" cy="404" r="6" fill="#f5dcbc"/><circle cx="410" cy="404" r="6" fill="#f5dcbc"/>` +
+          `<ellipse cx="384" cy="446" rx="44" ry="50" fill="${c}" stroke="${l}" stroke-width="2.5"/>` + `<ellipse cx="392" cy="462" rx="15" ry="11" fill="#f5dcbc"/>` +
+          `<ellipse cx="380" cy="440" rx="3.4" ry="4.4" fill="#3b2430"/><ellipse cx="404" cy="440" rx="3.4" ry="4.4" fill="#3b2430"/>` + P('M388,456 h8 l-4,4Z', '#5a3a2a') +
+          `<ellipse cx="370" cy="452" rx="6" ry="3.6" fill="#ff9c9c" opacity=".7"/>`;
+        const strap = U.both(P('M264,377 C256,404 254,436 258,462', 'none', '#8a5a36', 9) + P('M264,377 C256,404 254,436 258,462', 'none', '#e8b888', 5.5));
+        return { back, front: strap };
       } },
   ];
 
@@ -353,7 +501,53 @@
           pboth(`<g transform="rotate(-14 486 682)">${P(ell(486, 654, 9.5, 28), c, l)}${P(ell(486, 657, 4.5, 19), '#ffc2d8')}</g>`) + P(ell(PX, 702, 30, 26), c, l) + pface(703) +
           U.flower(482, 682, 8, '#ff9ec6', '#ffe27a') + U.flower(PX, 677, 9, '#fff3a8', '#ffb347') + U.flower(518, 682, 8, '#c4a7ff', '#ffe27a') + U.bow(PX, 727, 22, 13, '#8de8cc', '#27b592', { sw: 1.5 });
       } },
+    { id: 'hamster', n: 'ハムスター', tags: ['casual', 'school', 'fairy'], tb: [450, 670, 100, 110],
+      draw() {
+        const c = '#ffcf9a', l = '#d0925a', w = '#fff6ea';
+        return pboth(`<circle cx="${PX - 17}" cy="712" r="8" fill="${c}" stroke="${l}" stroke-width="2.2"/><circle cx="${PX - 17}" cy="713" r="4" fill="#ffc2d8"/>`) +
+          P(ell(PX, 746, 30, 28), c, l) + P(ell(PX, 754, 20, 18), w) + pboth(`<ellipse cx="${PX - 18}" cy="742" rx="9" ry="7" fill="${w}"/>`) +
+          pface(738, { blush: '#ff9cb8' }) + pboth(P(ell(PX - 8, 770, 6, 4.5), '#ffc2b0', l, 1.6)) +
+          `<ellipse cx="${PX}" cy="762" rx="6" ry="8" fill="#c98b4d" stroke="#8a5a2c" stroke-width="1.4"/>` + P(`M${PX},755 v14`, 'none', '#8a5a2c', 1);
+      } },
+    { id: 'piggy', n: 'こぶた', tags: ['casual', 'yume', 'sweets'], tb: [440, 650, 120, 130],
+      draw() {
+        const c = '#ffc2d4', l = '#e08aa8';
+        return P('M528,744 q12,-4 10,-14 q-8,-2 -6,6 q2,6 8,2', 'none', l, 2.2) + P(ell(PX, 744, 30, 27), c, l) + pboth(P(ell(PX - 12, 766, 8, 6), c, l, 2)) +
+          pboth(P('M474,688 L470,664 L492,680Z', c, l, 2.2) + P('M476,684 L474,672 L486,681Z', '#ff9cb8')) + P(ell(PX, 704, 32, 27), c, l) +
+          P(ell(PX, 714, 11, 8), '#ff9cb8', l, 1.8) + `<ellipse cx="${PX - 4}" cy="714" rx="2" ry="3" fill="${l}"/><ellipse cx="${PX + 4}" cy="714" rx="2" ry="3" fill="${l}"/>` +
+          pface(698, { noNose: true, noMouth: true, blush: '#ff8fae' }) + U.bow(PX + 18, 680, 18, 11, '#8fd4ff', '#3a8fe8', { sw: 1.3 });
+      } },
+    { id: 'babydragon', n: 'ちいさなドラゴン', tags: ['cool', 'magic', 'fairy'], tb: [440, 640, 130, 140],
+      draw() {
+        const c = '#9fe0b0', l = '#4fa870', b = '#fff3c4';
+        return two('M524,756 C548,758 556,740 550,724', l, 11, c, 6.5) + P('M550,724 l10,-10 l-2,14Z', '#ffd24a', '#d9a020', 1.2) +
+          pboth(P('M478,728 C456,712 446,724 452,742 C460,738 468,738 474,744Z', '#c8b0ff', '#8a5cf0', 2)) +
+          P(ell(PX, 746, 25, 27), c, l) + P(ell(PX, 752, 14, 17), b) + pboth(P(ell(PX - 11, 768, 8.5, 6), c, l, 2)) +
+          pboth(P('M482,684 L478,660 L494,678Z', '#ffd24a', '#d9a020', 1.8)) + P(ell(PX, 704, 31, 27), c, l) +
+          P(`M${PX - 6},680 l6,-8 l6,8Z`, '#7fd0a0', l, 1.4) + pface(704, { noNose: true, blush: '#ffb0a0' }) +
+          `<circle cx="${PX - 4}" cy="711" r="1.4" fill="${l}"/><circle cx="${PX + 4}" cy="711" r="1.4" fill="${l}"/>`;
+      } },
+    { id: 'ghost', n: 'おばけちゃん', tags: ['halloween', 'magic'], tb: [440, 630, 120, 150],
+      draw() {
+        const w = '#ffffff', l = '#c9c4e0';
+        return `<ellipse cx="${PX}" cy="790" rx="24" ry="5" fill="#5a3070" opacity=".12"/>` +
+          P(`M${PX - 30},716 C${PX - 30},680 ${PX + 30},680 ${PX + 30},716 L${PX + 30},752 q-7.5,10 -15,0 q-7.5,10 -15,0 q-7.5,10 -15,0 q-7.5,10 -15,0Z`, w, l, 2.5) +
+          pboth(P(`M${PX - 29},726 q-12,2 -14,-10 q10,-2 14,4Z`, w, l, 2)) + pface(712, { noNose: true, blush: '#ffb0d0' }) + U.bow(PX + 18, 692, 18, 11, '#ff8a2c', '#c9601a', { sw: 1.3 });
+      } },
+    { id: 'reindeer', n: 'こトナカイ', tags: ['xmas', 'winter'], tb: [440, 620, 120, 160],
+      draw() {
+        const c = '#c98b5a', l = '#8a5a34', b = '#f5dcbc';
+        const ant = P('M482,684 C478,670 474,662 468,652 M476,668 C470,666 466,660 464,654', 'none', '#6a4424', 4.5);
+        return pboth(ant) + P(ell(PX, 746, 25, 26), c, l) + P(ell(PX, 752, 14, 16), b) + pboth(P(ell(PX - 11, 768, 8.5, 6), '#6a4424', l, 2)) +
+          pboth(P('M474,694 q-14,-6 -16,4 q8,6 16,0Z', c, l, 2)) + P(ell(PX, 704, 30, 26), c, l) + P(ell(PX, 714, 14, 9), b) + pface(700, { noNose: true }) +
+          `<circle cx="${PX}" cy="712" r="6" fill="#f2485c" stroke="#b8182e" stroke-width="1.4"/><circle cx="${PX - 2}" cy="710" r="1.8" fill="#fff"/>` +
+          P(`M${PX - 22},728 q22,10 44,0`, 'none', '#4fae62', 5) + `<circle cx="${PX}" cy="734" r="4.5" fill="#ffd24a" stroke="#c9860f" stroke-width="1.2"/>`;
+      } },
   ];
+
+  ['bag', 'bouquet'].forEach((id) => { const h = A.HANDS.find((x) => x.id === id); if (h) h.side = 'L'; });
+  /* ついかアイテム（art-plus2.js）で つかう どうぐ */
+  A._ak = { GOLD, GOLDL, goldDefs, two, R, El, clipG, fluffy, temples, neckArc, fingers, PX, mir, pboth, pface };
 
   /* ================= くみあわせ ================= */
   A.accParts = function (st) {
@@ -364,7 +558,7 @@
     const gl = A.GLASSES[st.glasses | 0]; if (gl && gl.draw) o.glasses = gl.draw();
     const er = A.EARS[st.ear | 0]; if (er && er.draw) o.ear = er.draw();
     const nk = A.NECKS[st.neck | 0]; if (nk && nk.draw) o.neck = nk.draw();
-    const hn = A.HANDS[st.hand | 0]; if (hn && hn.draw) o.hand = hn.draw(k);
+    const hn = A.HANDS[st.hand | 0]; if (hn && hn.draw) o.hand = A.handG(hn.draw(k), hn.side || 'R');
     const bk = A.BACKS[st.back | 0]; if (bk && bk.draw) { const r = bk.draw(); o.back = r.back || ''; o.neck = (r.front || '') + o.neck; }
     const pt = A.PETS[st.pet | 0]; if (pt && pt.draw) o.pet = `<g transform="translate(506,774) scale(1.28) translate(-500,-774)">${pt.draw()}</g>`;
     return o;
