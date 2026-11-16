@@ -94,29 +94,46 @@
       nextT += STEP; step++;
     }
   }
-  /* BGM：audio/bgm.mp3 を ちいさめの おとで くりかえし ながす */
+  /* BGM：audio/bgm.mp3 を ちいさめの おとで くりかえし ながす
+     ・スマホは「タッチの はじまり」では おとを ならせないので、ならなかったら つぎの タップで もういちど ためす
+     ・iPhone/iPad は audio の volume が きかないので、http(s) で ひらいた ときは Web Audio の ゲインで おとを ちいさくする */
   const BGM_VOL = 0.22;
-  let bgmEl = null, fadeT = null;
+  let bgmEl = null, bgmGain = null, fadeT = null, bgmWant = false;
+  const getVol = () => (bgmGain ? bgmGain.gain.value : bgmEl.volume);
+  const setVol = (v) => { if (bgmGain) bgmGain.gain.value = v; else bgmEl.volume = v; };
   function fadeTo(v, ms, done) {
     clearInterval(fadeT);
-    const from = bgmEl.volume, t0 = performance.now();
+    const from = getVol(), t0 = performance.now();
     fadeT = setInterval(() => {
       const k = Math.min(1, (performance.now() - t0) / ms);
-      bgmEl.volume = Math.max(0, Math.min(1, from + (v - from) * k));
+      setVol(Math.max(0, Math.min(1, from + (v - from) * k)));
       if (k >= 1) { clearInterval(fadeT); if (done) done(); }
     }, 40);
   }
+  function makeBgm() {
+    bgmEl = new Audio('audio/bgm.mp3'); bgmEl.loop = true; bgmEl.preload = 'auto';
+    bgmEl.setAttribute('playsinline', '');
+    const c = /^https?:$/.test(location.protocol) ? ctx() : null;
+    if (c && c.createMediaElementSource) {
+      try { const src = c.createMediaElementSource(bgmEl); bgmGain = c.createGain(); bgmGain.gain.value = 0; src.connect(bgmGain); bgmGain.connect(c.destination); } catch (e) { bgmGain = null; }
+    }
+    setVol(0);
+  }
   let bgmMuted = false;
+  const bgmPlaying = () => !!(bgmEl && !bgmEl.paused);
   S.startBgm = function () {
     if (!S.on.bgm || bgmMuted) return;
-    if (!bgmEl) { bgmEl = new Audio('audio/bgm.mp3'); bgmEl.loop = true; bgmEl.preload = 'auto'; bgmEl.volume = 0; }
+    if (!bgmEl) makeBgm();
+    if (S.ctx && S.ctx.state === 'suspended') S.ctx.resume();
+    bgmWant = true;
     const pr = bgmEl.play();
-    if (pr && pr.catch) pr.catch(() => { /* まだ タッチされていない ときは あとで ならす */ });
+    if (pr && pr.catch) pr.catch(() => { /* まだ ならせない ときは つぎの タップで もういちど */ });
     fadeTo(BGM_VOL, 800);
   };
   S.stopBgm = function () {
+    bgmWant = false;
     if (!bgmEl) return;
-    fadeTo(0, 300, () => bgmEl.pause());
+    fadeTo(0, 300, () => { if (!bgmWant) bgmEl.pause(); });
   };
   S.setBgm = (v) => { S.on.bgm = v; if (v) S.startBgm(); else S.stopBgm(); };
   /* ショーの あいだだけ BGM を とめる（せっていは かえない） */
@@ -155,6 +172,9 @@
   S.setSe = (v) => { S.on.se = v; };
   /* さいしょの タッチで おとを ならせるようにする */
   S.unlock = () => { ctx(); if (S.on.bgm) S.startBgm(); };
+  /* おとを ならせる そうさ（タップの おわり・クリック・キー）の たびに、BGM が とまっていたら もういちど ならす */
+  const retry = () => { if (S.on.bgm && !bgmMuted && !document.hidden && !bgmPlaying()) S.unlock(); else if (S.ctx && S.ctx.state === 'suspended') S.ctx.resume(); };
+  ['touchend', 'click', 'keydown'].forEach((t) => document.addEventListener(t, retry, true));
   void schedule; /* むかしの オルゴールBGM（いまは つかわない） */
   document.addEventListener('visibilitychange', () => { if (document.hidden) { S.stopBgm(); S.stopFiles(); } else if (S.on.bgm && bgmEl) S.startBgm(); });
 

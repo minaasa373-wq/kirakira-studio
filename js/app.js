@@ -8,7 +8,7 @@
   const rnd = (n) => Math.floor(Math.random() * n);
   const pick = (a) => a[rnd(a.length)];
   const PHOTO_VB = [-30, 0, 660, 880];
-  const APP_VERSION = '4.1.1'; /* こうしんの たびに あげる */
+  const APP_VERSION = '4.1.2'; /* こうしんの たびに あげる */
   const STORE = 'kirakira-oshare-studio-v1';
   const ALBUM_MAX = 30;
 
